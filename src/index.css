@@ -1,0 +1,30 @@
+/* src/index.css */
+:root {
+  /* Aplicando a fonte 'Inter' como padrão para o corpo do texto */
+  font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  /* Cor de texto padrão para o tema claro */
+  color: #213547;
+
+  /* APLICANDO SEU GRADIENTE
+     (O 'background: #ffffff' é um fallback)
+  */
+  background: #ffffff;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 1) 0%, rgba(97, 255, 129, 1) 42%, rgba(247, 247, 247, 1) 100%, rgba(252, 176, 69, 1) 100%);
+
+  /* Fixa o fundo para que o gradiente não role com o conteúdo */
+  background-attachment: fixed;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
