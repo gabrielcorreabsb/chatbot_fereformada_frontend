@@ -1,315 +1,1449 @@
-/* src/App.css */
-
-/* --- LAYOUTS GERAIS --- */
-.App {
-  /* Este .App é para a página de CHAT */
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-/* --- ESTILOS DA PÁGINA INICIAL (LOGIN) --- */
-
-.HomePageContainer {
-  display: flex;
-  width: 100%;
-  min-height: 100vh;
-  align-items: center; /* Centraliza verticalmente */
-  justify-content: center; /* Centraliza horizontalmente */
-  padding: 2rem;
-  box-sizing: border-box; /* Garante que o padding não quebre o layout */
-}
-
-/* Coluna da Esquerda (Intro) */
-.IntroColumn {
-  flex-basis: 50%;
-  padding-right: 3rem;
-  max-width: 600px;
-}
-
-.IntroLogo {
-  /* O Título H1 */
-  font-family: 'EB Garamond', serif;
-  font-weight: 500;
-  font-size: 3.2rem;
-  color: #2c2c2c;
-  margin-top: 0;
-  margin-bottom: 0.5rem;
-}
-
-.IntroSubtitle {
-  font-size: 1.2rem;
-  color: #555;
-  margin-top: 0;
-  margin-bottom: 1.5rem;
-}
-
-.IntroDivider {
-  border: 0;
-  border-top: 1px solid #ddd;
-  margin-bottom: 1.5rem;
-}
-
-.IntroColumn h2 {
-  font-family: 'EB Garamond', serif;
-  font-size: 1.8rem;
-  color: #333;
-  margin-bottom: 0.5rem;
-}
-
-.IntroColumn p, .IntroColumn li {
-  color: #444;
-  line-height: 1.6;
-}
-
-.IntroColumn ul {
-  padding-left: 20px;
-}
-.IntroColumn li {
-  margin-bottom: 0.5rem;
-}
-
-/* Coluna da Direita (Login) */
-.LoginColumn {
-  flex-basis: 50%;
-  max-width: 420px;
-}
-
-.LoginContainer {
-  /* Este é o "card" de login */
-  width: 100%;
-  padding: 2rem 2.5rem;
-  background: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-}
-
-.LoginHeader {
-  font-family: 'Inter', sans-serif;
-  text-align: center;
-  font-weight: 700;
-  font-size: 1.5rem;
-  color: #2c2c2c;
-  margin-top: 0;
-  margin-bottom: 0.5rem;
-}
-
-.LoginSubheader {
-  text-align: center;
-  color: #666;
-  margin-top: 0;
-  margin-bottom: 1.5rem;
-}
-
-/* --- RESPONSIVIDADE (para celulares) --- */
-@media (max-width: 900px) {
-  .HomePageContainer {
-    flex-direction: column; /* Empilha as colunas */
-    padding: 1rem;
-  }
-  .IntroColumn {
-    padding-right: 0;
-    max-width: 100%;
-    margin-bottom: 2rem;
-  }
-  .LoginColumn {
-    max-width: 100%;
-    width: 100%;
-  }
-}
-
-.AlphaWarning {
-  background-color: #fffbeb; /* Amarelo bem claro */
-  border: 1px solid #fde68a; /* Borda amarela */
-  color: #92400e; /* Texto escuro (cor de âmbar) */
-  padding: 12px 16px;
-  border-radius: 8px;
-  font-size: 0.9em;
-  margin-bottom: 1.5rem;
-  line-height: 1.5;
-}
-
-.AlphaWarning strong {
-  color: #78350f; /* Texto forte um pouco mais escuro */
-  display: block; /* Faz o "Versão Alpha" ficar na linha de cima */
-  margin-bottom: 4px;
-}
-
+/* ====================================================================
+   APP.CSS - REFORMED AI CHAT (VERSÃO MODERNA)
+   ====================================================================
+   Estrutura:
+   1. Landing Page
+   2. Chat Page (Logado)
+   3. Componentes Compartilhados
+   4. Modal de Login
+   5. Responsividade
+   6. Melhorias UX/Acessibilidade
+==================================================================== */
 
 /* ====================================================================
-  ESTILOS DA PÁGINA DE CHAT (QUANDO LOGADO)
-====================================================================
-*/
+   1. LANDING PAGE
+==================================================================== */
+
+.LandingPage {
+  /* Container principal da página inicial */
+}
+
+/* --- Preview do Chat na Landing Page --- */
+.ChatPage.landing-view {
+  display: flex;
+  height: 100vh;
+  background: #f8fafb;
+  color: #333;
+  overflow: hidden;
+}
+
+/* --- Sidebar da Landing Page --- */
+.Sidebar.landing-sidebar {
+  width: 30%;
+  max-width: 380px;
+  min-width: 280px;
+  border-right: 1px solid #e5e9ec;
+  background: linear-gradient(to bottom, #ffffff 0%, #f9fafb 100%);
+  display: flex;
+  flex-direction: column;
+  padding: 2.5rem 2rem;
+  box-sizing: border-box;
+  box-shadow: 2px 0 20px rgba(0, 0, 0, 0.03);
+}
+
+.SidebarPlaceholder {
+  text-align: left;
+}
+
+.SidebarPlaceholder .IntroLogo {
+  font-family: 'EB Garamond', serif;
+  font-weight: 600;
+  color: #1a1a1a;
+  font-size: 2.8rem;
+  margin: 0 0 0.8rem 0;
+  padding: 0;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.SidebarSlogan {
+  font-size: 1.15rem;
+  color: #5a6c7d;
+  margin: 0 0 2rem 0;
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+/* Aviso Alpha na Sidebar */
+.AlphaWarning.sidebar-warning {
+  background: linear-gradient(135deg, #fff9e6 0%, #fff3d1 100%);
+  border: 1px solid #ffd97d;
+  color: #8b6914;
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  text-align: left;
+  display: inline-block;
+  margin-top: 1rem;
+  box-shadow: 0 2px 8px rgba(255, 193, 7, 0.1);
+}
+
+.AlphaWarning.sidebar-warning strong {
+  color: #6b4e0f;
+  display: inline;
+  margin: 0 5px 0 0;
+  font-weight: 600;
+}
+
+.AlphaWarning.sidebar-warning span {
+  font-size: 0.92em;
+}
+
+/* --- Janela de Chat Estática (Landing) --- */
+.ChatWindow {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+.MessageList.landing-list {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 40px 32px;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(to bottom, #fafbfc 0%, #ffffff 100%);
+}
+
+/* --- Mensagem de Comparação (Landing) --- */
+.Message.comparison-message {
+  max-width: 100%;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  margin-top: 40px;
+  margin-bottom: 40px;
+}
+
+.ComparisonMessageContent h2 {
+  font-family: 'EB Garamond', serif;
+  font-size: 2rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 0.8rem;
+  text-align: center;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+.ComparisonMessageContent .ComparisonIntro {
+  font-size: 1.05rem;
+  color: #5a6c7d;
+  text-align: center;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+  font-weight: 400;
+}
+
+/* Container das 3 Colunas de Comparação */
+.ComparisonContainer.landing {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.8rem;
+  margin-top: 2rem;
+  text-align: left;
+}
+
+/* Cards de Comparação - Design Moderno */
+.ComparisonCard {
+  border: 1px solid #e5e9ec;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 1.8rem;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.ComparisonCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #e5e9ec 0%, #cbd5e0 100%);
+  transition: all 0.3s ease;
+}
+
+.ComparisonCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  border-color: #cbd5e0;
+}
+
+.ComparisonCard h3 {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 1.05rem;
+  margin: 0 0 1.2rem 0;
+  color: #1a1a1a;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #f0f3f5;
+  padding-bottom: 1rem;
+}
+
+.ComparisonCard .logo-icon {
+  margin-right: 0.6rem;
+  font-size: 1.2rem;
+}
+
+.ComparisonCard p {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: #4a5568;
+  flex-grow: 1;
+  margin: 0;
+  font-weight: 400;
+}
+
+.SourceTag {
+  font-size: 0.78rem;
+  font-style: italic;
+  color: #8492a6;
+  margin-top: 1.2rem;
+  border-top: 1px dashed #e5e9ec;
+  padding-top: 0.9rem;
+}
+
+/* Destaque para Reformed AI - Mais Moderno */
+.ComparisonCard.reformed {
+  border-color: #61ff81;
+  background: linear-gradient(135deg, #ffffff 0%, #f0fff4 100%);
+  box-shadow: 0 4px 20px rgba(97, 255, 129, 0.15);
+}
+
+.ComparisonCard.reformed::before {
+  background: linear-gradient(90deg, #61ff81 0%, #3dd664 100%);
+}
+
+.ComparisonCard.reformed h3 {
+  color: #0d3a17;
+}
+
+.ComparisonCard.reformed:hover {
+  box-shadow: 0 8px 28px rgba(97, 255, 129, 0.25);
+}
+
+/* --- Bloco de Ação (Login) na Landing --- */
+.LandingForm {
+  padding: 24px 32px;
+  border-top: 1px solid #e5e9ec;
+  background: linear-gradient(to top, #fafbfc 0%, #ffffff 100%);
+  text-align: center;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.03);
+}
+
+.LandingForm p {
+  margin: 0 0 18px 0;
+  color: #2d3748;
+  font-weight: 500;
+  font-size: 1.12rem;
+}
+
+.LandingButtons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.LoginButton {
+  background: linear-gradient(135deg, #0d3a17 0%, #1a5e2a 100%);
+  color: #ffffff;
+  border: none;
+  padding: 15px 32px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1.02rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: 'Inter', sans-serif;
+  box-shadow: 0 4px 12px rgba(13, 58, 23, 0.2);
+  letter-spacing: 0.01em;
+}
+
+.LoginButton:hover {
+  background: linear-gradient(135deg, #1a5e2a 0%, #0d3a17 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(13, 58, 23, 0.3);
+}
+
+.LoginButton:active {
+  transform: translateY(0);
+}
+
+/* ====================================================================
+   2. CHAT PAGE (QUANDO LOGADO)
+==================================================================== */
+
+/* --- Header Moderno --- */
 .Header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 20px;
-  background: #ffffff; /* Fundo branco */
-  color: #213547; /* Texto escuro */
-  border-bottom: 1px solid #e0e0e0; /* Borda sutil */
-  font-size: 0.9em;
-  /* Garante que o Header use a fonte Inter */
+  padding: 14px 24px;
+  background: #ffffff;
+  color: #1a1a1a;
+  border-bottom: 1px solid #e5e9ec;
+  font-size: 0.95rem;
   font-family: 'Inter', sans-serif;
+  min-height: 60px;
+  box-sizing: border-box;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
 }
 
 .Header button {
-  /* Botão de "Sair" */
-  background: #e63946; /* Um vermelho para "sair" */
+  background: linear-gradient(135deg, #e63946 0%, #d62828 100%);
   color: #ffffff;
   border: none;
-  padding: 5px 12px;
-  border-radius: 4px;
+  padding: 9px 18px;
+  border-radius: 8px;
   cursor: pointer;
-  font-weight: 500;
-  transition: background 0.2s;
+  font-weight: 600;
+  font-size: 0.92rem;
+  transition: all 0.3s ease;
+  font-family: 'Inter', sans-serif;
+  box-shadow: 0 2px 8px rgba(230, 57, 70, 0.2);
 }
+
 .Header button:hover {
-  background: #d62828;
+  background: linear-gradient(135deg, #d62828 0%, #c1121f 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(230, 57, 70, 0.3);
 }
 
 /* --- Layout da Página de Chat --- */
 .ChatPage {
   display: flex;
-  /* Altura = 100% da tela menos a altura do Header */
-  height: calc(100vh - 50px);
-  background: #f4f7f6; /* Fundo cinza bem claro */
+  height: calc(100vh - 60px);
+  background: #f8fafb;
   color: #333;
+  position: relative;
+  overflow: hidden;
 }
 
-/* --- Barra Lateral --- */
+/* --- Sidebar (Chat Logado) - Moderna --- */
 .Sidebar {
   width: 30%;
-  max-width: 300px; /* Largura máxima */
-  border-right: 1px solid #e0e0e0;
-  overflow-y: auto;
-  background: #ffffff; /* Fundo branco para a sidebar */
+  max-width: 320px;
+  min-width: 260px;
+  border-right: 1px solid #e5e9ec;
+  background: linear-gradient(to bottom, #ffffff 0%, #f9fafb 100%);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  box-shadow: 2px 0 15px rgba(0, 0, 0, 0.02);
 }
 
+/* Lista de Conversas */
+.ConversationList {
+  flex-grow: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Botão Nova Conversa - Moderno */
 .NewChatBtn {
-  /* Usando o verde do seu gradiente */
-  background: #61ff81;
-  color: #0d3a17; /* Verde escuro para contraste */
-  padding: 15px;
+  background: linear-gradient(135deg, #61ff81 0%, #3dd664 100%);
+  color: #0d3a17;
+  padding: 16px;
   border: none;
   width: 100%;
   cursor: pointer;
-  font-size: 16px;
-  font-weight: bold;
-  transition: background 0.2s;
+  font-size: 1.02rem;
+  font-weight: 700;
+  transition: all 0.3s ease;
   font-family: 'Inter', sans-serif;
-}
-.NewChatBtn:hover {
-  background: #80ff9a;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(97, 255, 129, 0.2);
+  letter-spacing: 0.02em;
 }
 
+.NewChatBtn:hover {
+  background: linear-gradient(135deg, #3dd664 0%, #2bc94e 100%);
+  box-shadow: 0 4px 12px rgba(97, 255, 129, 0.3);
+}
+
+.NewChatBtn:active {
+  transform: scale(0.98);
+}
+
+/* Item de Conversa - Moderno */
 .ConvoItem {
-  padding: 15px 20px;
-  border-bottom: 1px solid #eee;
+  padding: 16px 20px;
+  border-bottom: 1px solid #f0f3f5;
   cursor: pointer;
-  font-size: 0.95em;
+  font-size: 0.95rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  color: #444; /* Cor do texto do item */
-  transition: background 0.2s;
+  color: #4a5568;
+  transition: all 0.2s ease;
+  font-weight: 500;
+  position: relative;
 }
+
+.ConvoItem::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: #61ff81;
+  transform: scaleY(0);
+  transition: transform 0.2s ease;
+}
+
 .ConvoItem:hover {
-  background: #f4f4f4; /* Destaque sutil ao passar o mouse */
+  background: #f7f9fa;
+  color: #1a1a1a;
+  padding-left: 23px;
 }
+
+.ConvoItem:hover::before {
+  transform: scaleY(1);
+}
+
 .ConvoItem.active {
-  background: #61ff81; /* Verde para o item ativo */
+  background: linear-gradient(90deg, #e6fff0 0%, #f0fff4 100%);
   color: #0d3a17;
-  font-weight: bold;
+  font-weight: 700;
+  padding-left: 23px;
+  border-left: 3px solid #61ff81;
 }
 
-/* --- Janela de Chat --- */
-.ChatWindow {
-  width: 100%; /* Ocupa o resto do espaço */
-  display: flex;
-  flex-direction: column;
+.ConvoItem.active::before {
+  transform: scaleY(1);
 }
 
+/* --- Lista de Mensagens --- */
 .MessageList {
   flex-grow: 1;
   overflow-y: auto;
-  padding: 20px;
+  overflow-x: hidden;
+  padding: 28px;
   display: flex;
   flex-direction: column;
+  background: linear-gradient(to bottom, #fafbfc 0%, #ffffff 100%);
 }
 
+/* ====================================================================
+   3. COMPONENTES COMPARTILHADOS
+==================================================================== */
+
+/* --- Mensagens - Design Melhorado --- */
 .Message {
-  margin-bottom: 15px;
-  padding: 10px 15px;
-  border-radius: 10px;
-  max-width: 80%;
-  line-height: 1.5;
-  white-space: pre-wrap;
+  margin-bottom: 24px;
+  padding: 14px 20px;
+  border-radius: 14px;
+  max-width: 85%;
+  line-height: 1.7;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.98rem;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: all 0.2s ease;
+}
+
+.Message:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
 }
 
 .Message pre {
-  margin: 0;
-  font-family: inherit;
+  margin: 0.5em 0;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
   white-space: pre-wrap;
+  font-size: 0.9rem;
+  overflow-x: auto;
+  background: #f5f7fa;
+  padding: 12px;
+  border-radius: 8px;
+  border-left: 3px solid #cbd5e0;
 }
 
-/* Mensagem do Usuário */
+.Message code {
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  background: #f5f7fa;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.88em;
+  color: #e63946;
+}
+
+.Message pre code {
+  background: transparent;
+  padding: 0;
+  color: inherit;
+}
+
+/* Listas dentro de mensagens */
+.Message ul,
+.Message ol {
+  padding-left: 24px;
+  margin: 0.8em 0;
+}
+
+.Message li {
+  margin-bottom: 0.5em;
+  line-height: 1.6;
+}
+
+.Message li::marker {
+  color: #61ff81;
+  font-weight: bold;
+}
+
+/* Parágrafos dentro de mensagens */
+.Message p {
+  margin: 0 0 0.9em 0;
+  line-height: 1.7;
+}
+
+.Message p:last-child {
+  margin-bottom: 0;
+}
+
+/* Mensagem do Usuário - Moderna */
 .Message.user {
-  /* Um azul suave para o usuário */
-  background: #e0f7fa;
+  background: linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 100%);
   color: #004d40;
   align-self: flex-end;
-  border: 1px solid #b2ebf2;
+  border: 1px solid #80deea;
+  box-shadow: 0 3px 10px rgba(0, 172, 193, 0.15);
 }
 
-/* Mensagem da IA */
+.Message.user:hover {
+  box-shadow: 0 5px 16px rgba(0, 172, 193, 0.2);
+}
+
+/* Mensagem da IA - Tipografia Melhorada */
 .Message.assistant {
-  background: #ffffff; /* Fundo branco para a IA */
-  color: #333;
+  background: #ffffff;
+  color: #2d3748;
   align-self: flex-start;
-  border: 1px solid #eee;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  border: 1px solid #e5e9ec;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+  font-weight: 400;
+  letter-spacing: 0.01em;
 }
 
-/* --- Formulário de Envio --- */
+.Message.assistant:hover {
+  box-shadow: 0 5px 16px rgba(0, 0, 0, 0.08);
+}
+
+/* Títulos dentro das mensagens */
+.Message h1,
+.Message h2,
+.Message h3,
+.Message h4,
+.Message h5,
+.Message h6 {
+  font-family: 'EB Garamond', serif;
+  margin: 1em 0 0.5em 0;
+  line-height: 1.3;
+  color: #1a1a1a;
+  font-weight: 600;
+}
+
+.Message h1 { font-size: 1.8em; }
+.Message h2 { font-size: 1.5em; }
+.Message h3 { font-size: 1.3em; }
+.Message h4 { font-size: 1.1em; }
+
+.Message h1:first-child,
+.Message h2:first-child,
+.Message h3:first-child,
+.Message h4:first-child {
+  margin-top: 0;
+}
+
+/* Links dentro das mensagens */
+.Message a {
+  color: #0d3a17;
+  text-decoration: underline;
+  transition: color 0.2s ease;
+  font-weight: 500;
+}
+
+.Message a:hover {
+  color: #1a5e2a;
+}
+
+/* Blockquotes */
+.Message blockquote {
+  margin: 1em 0;
+  padding: 12px 20px;
+  border-left: 4px solid #61ff81;
+  background: #f7f9fa;
+  border-radius: 0 8px 8px 0;
+  font-style: italic;
+  color: #4a5568;
+}
+
+/* --- Formulário de Chat - Moderno --- */
 .ChatForm {
   display: flex;
-  padding: 10px;
-  border-top: 1px solid #e0e0e0;
-  background: #ffffff; /* Fundo branco */
+  padding: 18px;
+  border-top: 1px solid #e5e9ec;
+  background: linear-gradient(to top, #fafbfc 0%, #ffffff 100%);
+  gap: 12px;
+  flex-shrink: 0;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.02);
 }
+
 .ChatForm input {
   flex-grow: 1;
-  padding: 12px;
-  border: 1px solid #ccc;
-  background: #fdfdfd;
-  color: #222;
-  border-radius: 8px;
-  font-size: 1em;
+  padding: 14px 18px;
+  border: 2px solid #e5e9ec;
+  background: #ffffff;
+  color: #1a1a1a;
+  border-radius: 12px;
+  font-size: 1rem;
   font-family: 'Inter', sans-serif;
+  transition: all 0.3s ease;
+  font-weight: 400;
 }
+
+.ChatForm input::placeholder {
+  color: #a0aec0;
+  font-weight: 400;
+}
+
 .ChatForm input:focus {
   outline: none;
-  border-color: #61ff81; /* Borda verde ao focar */
-  box-shadow: 0 0 0 2px rgba(97, 255, 129, 0.3);
+  border-color: #61ff81;
+  box-shadow: 0 0 0 4px rgba(97, 255, 129, 0.15);
+  background: #ffffff;
 }
 
 .ChatForm button {
-  background: #0d3a17; /* Verde escuro */
+  background: linear-gradient(135deg, #0d3a17 0%, #1a5e2a 100%);
   color: #ffffff;
   border: none;
-  padding: 0 15px;
-  margin-left: 10px;
-  border-radius: 8px;
+  padding: 14px 24px;
+  border-radius: 12px;
   cursor: pointer;
-  font-weight: bold;
-  transition: background 0.2s;
+  font-weight: 700;
+  font-size: 1rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   font-family: 'Inter', sans-serif;
-}
-.ChatForm button:hover {
-  background: #1a5e2a;
-}
-.ChatForm button:disabled {
-  background: #ccc;
-  cursor: not-allowed;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(13, 58, 23, 0.2);
+  letter-spacing: 0.02em;
 }
 
+.ChatForm button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #1a5e2a 0%, #247a38 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(13, 58, 23, 0.3);
+}
+
+.ChatForm button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.ChatForm button:disabled {
+  background: linear-gradient(135deg, #cbd5e0 0%, #a0aec0 100%);
+  cursor: not-allowed;
+  opacity: 0.6;
+  box-shadow: none;
+}
+
+/* --- Botão Menu Mobile - ÍCONE MODERNO (Hamburger) --- */
+.MobileMenuButton {
+  display: none;
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 100;
+  background: #ffffff;
+  border: 1px solid #e5e9ec;
+  border-radius: 12px;
+  width: 48px;
+  height: 48px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+/* Ícone Hamburger Moderno */
+.MobileMenuButton span {
+  display: block;
+  width: 24px;
+  height: 2.5px;
+  background: #0d3a17;
+  border-radius: 2px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.MobileMenuButton span:nth-child(1) {
+  width: 18px;
+  align-self: flex-start;
+  margin-left: 3px;
+}
+
+.MobileMenuButton span:nth-child(3) {
+  width: 18px;
+  align-self: flex-end;
+  margin-right: 3px;
+}
+
+.MobileMenuButton:hover {
+  background: #f7f9fa;
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+/* Animação quando sidebar está aberta */
+.ChatPage.sidebar-mobile-open .MobileMenuButton span:nth-child(1) {
+  transform: rotate(45deg) translate(6px, 6px);
+  width: 24px;
+  margin-left: 0;
+}
+
+.ChatPage.sidebar-mobile-open .MobileMenuButton span:nth-child(2) {
+  opacity: 0;
+  transform: translateX(-10px);
+}
+
+.ChatPage.sidebar-mobile-open .MobileMenuButton span:nth-child(3) {
+  transform: rotate(-45deg) translate(6px, -6px);
+  width: 24px;
+  margin-right: 0;
+}
+
+.MobileMenuButton:active {
+  transform: scale(0.95);
+}
+
+/* ====================================================================
+   4. MODAL DE LOGIN - DESIGN MODERNO
+==================================================================== */
+
+.LoginModalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  box-sizing: border-box;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.LoginModalContent {
+  background: #ffffff;
+  padding: 3rem 2.5rem;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  max-width: 440px;
+  width: 100%;
+  position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.CloseModalButton {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: #f7f9fa;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 1.4rem;
+  color: #718096;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  line-height: 1;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.CloseModalButton:hover {
+  background: #e5e9ec;
+  color: #1a1a1a;
+  transform: rotate(90deg);
+}
+
+.LoginHeader {
+  font-family: 'EB Garamond', serif;
+  text-align: center;
+  font-weight: 700;
+  font-size: 1.8rem;
+  color: #1a1a1a;
+  margin: 0 0 2.5rem 0;
+  letter-spacing: -0.01em;
+}
+
+/* Estilos do formulário de autenticação - Modernos */
+.AuthFormContainer {
+  font-family: 'Inter', sans-serif;
+}
+
+.AuthFormContainer button,
+.AuthFormContainer input,
+.AuthFormContainer label,
+.AuthFormContainer a,
+.AuthFormContainer div[role="button"] {
+  font-family: 'Inter', sans-serif !important;
+}
+
+.AuthFormContainer label {
+  display: block;
+  margin-bottom: 0.6rem;
+  font-weight: 600;
+  color: #2d3748;
+  font-size: 0.92rem;
+}
+
+.AuthFormContainer input {
+  width: 100%;
+  padding: 13px 16px !important;
+  border-radius: 10px !important;
+  border: 2px solid #e5e9ec !important;
+  font-size: 1rem !important;
+  box-sizing: border-box;
+  margin-bottom: 1.2rem;
+  transition: all 0.3s ease;
+  background: #ffffff;
+  color: #1a1a1a;
+  font-weight: 400;
+}
+
+.AuthFormContainer input::placeholder {
+  color: #a0aec0;
+}
+
+.AuthFormContainer input:focus {
+  outline: none !important;
+  border-color: #61ff81 !important;
+  box-shadow: 0 0 0 4px rgba(97, 255, 129, 0.15) !important;
+}
+
+.AuthFormContainer button {
+  width: 100%;
+  padding: 14px 18px !important;
+  border-radius: 10px !important;
+  font-weight: 700 !important;
+  font-size: 1.02rem !important;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: none;
+  background: linear-gradient(135deg, #0d3a17 0%, #1a5e2a 100%);
+  color: #ffffff;
+  margin-top: 1rem;
+  box-shadow: 0 4px 12px rgba(13, 58, 23, 0.2);
+  letter-spacing: 0.02em;
+}
+
+.AuthFormContainer button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #1a5e2a 0%, #247a38 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(13, 58, 23, 0.3);
+}
+
+.AuthFormContainer button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.AuthFormContainer button:disabled {
+  background: linear-gradient(135deg, #cbd5e0 0%, #a0aec0 100%);
+  cursor: not-allowed;
+  opacity: 0.6;
+  box-shadow: none;
+}
+
+.AuthFormContainer a {
+  font-size: 0.92rem !important;
+  font-weight: 600 !important;
+  color: #0d3a17;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  display: inline-block;
+}
+
+.AuthFormContainer a:hover {
+  color: #1a5e2a;
+  text-decoration: underline;
+  transform: translateX(2px);
+}
+
+/* Mensagens de erro/sucesso */
+.AuthFormContainer .error-message {
+  background: linear-gradient(135deg, #fee 0%, #fdd 100%);
+  color: #c53030;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  border-left: 4px solid #e53e3e;
+}
+
+.AuthFormContainer .success-message {
+  background: linear-gradient(135deg, #e6fff0 0%, #d1f7e3 100%);
+  color: #22543d;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  border-left: 4px solid #61ff81;
+}
+
+/* ====================================================================
+   5. RESPONSIVIDADE
+==================================================================== */
+
+/* --- Tablets (768px - 1024px) --- */
+@media (max-width: 1024px) {
+  .Sidebar.landing-sidebar {
+    width: 35%;
+    max-width: 320px;
+    padding: 2rem 1.5rem;
+  }
+
+  .SidebarPlaceholder .IntroLogo {
+    font-size: 2.3rem;
+  }
+
+  .SidebarSlogan {
+    font-size: 1.05rem;
+  }
+
+  .ComparisonContainer.landing {
+    gap: 1.2rem;
+  }
+
+  .ComparisonCard {
+    padding: 1.5rem;
+  }
+
+  .ComparisonMessageContent h2 {
+    font-size: 1.7rem;
+  }
+
+  .Message {
+    font-size: 0.95rem;
+  }
+}
+
+/* --- Tablets Small e Mobile Landscape (481px - 768px) --- */
+@media (max-width: 768px) {
+  /* Mostra botão de menu mobile */
+  .MobileMenuButton {
+    display: flex !important;
+  }
+
+  /* Header ajustado para mobile */
+  .Header {
+    padding: 12px 20px 12px 70px;
+    min-height: 56px;
+  }
+
+  /* Sidebar vira overlay no mobile */
+  .Sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 80%;
+    max-width: 320px;
+    z-index: 99;
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
+    transform: translateX(-100%);
+  }
+
+  /* Sidebar da landing também vira overlay */
+  .Sidebar.landing-sidebar {
+    position: fixed;
+    width: 80%;
+    max-width: 320px;
+    transform: translateX(-100%);
+    z-index: 99;
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
+  }
+
+  /* Estado ABERTO da sidebar */
+  .ChatPage.sidebar-mobile-open .Sidebar,
+  .ChatPage.sidebar-mobile-open .Sidebar.landing-sidebar {
+    transform: translateX(0);
+  }
+
+  /* Overlay escuro quando sidebar aberta */
+  .ChatPage.sidebar-mobile-open::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 98;
+    animation: fadeIn 0.3s ease;
+  }
+
+  /* ChatWindow ocupa tela toda */
+  .ChatWindow {
+    width: 100%;
+  }
+
+  /* Comparação vira 1 coluna */
+  .ComparisonContainer.landing {
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+  }
+
+  .Message.comparison-message {
+    margin-top: 24px;
+    margin-bottom: 24px;
+  }
+
+  .ComparisonMessageContent h2 {
+    font-size: 1.6rem;
+  }
+
+  .ComparisonMessageContent .ComparisonIntro {
+    font-size: 1rem;
+  }
+
+  /* Mensagens ocupam mais espaço */
+  .Message {
+    max-width: 92%;
+    font-size: 0.96rem;
+    padding: 13px 17px;
+  }
+
+  /* MessageList com menos padding */
+  .MessageList,
+  .MessageList.landing-list {
+    padding: 20px 16px;
+  }
+
+  /* Form ajustado */
+  .ChatForm {
+    padding: 14px;
+    gap: 10px;
+  }
+
+  .ChatForm input {
+    font-size: 16px; /* Previne zoom no iOS */
+    padding: 13px 16px;
+  }
+
+  .ChatForm button {
+    padding: 13px 20px;
+    font-size: 0.98rem;
+  }
+
+  /* Landing Form */
+  .LandingForm {
+    padding: 18px 20px;
+  }
+
+  .LandingForm p {
+    font-size: 1.05rem;
+  }
+
+  .LoginButton {
+    padding: 13px 28px;
+    font-size: 0.98rem;
+  }
+
+  /* Modal ajustado */
+  .LoginModalContent {
+    padding: 2.5rem 2rem;
+    max-width: 95%;
+    border-radius: 16px;
+  }
+
+  .LoginHeader {
+    font-size: 1.6rem;
+    margin-bottom: 2rem;
+  }
+
+  .CloseModalButton {
+    top: 16px;
+    right: 16px;
+    width: 34px;
+    height: 34px;
+    font-size: 1.3rem;
+  }
+}
+
+/* --- Mobile Portrait (até 480px) --- */
+@media (max-width: 480px) {
+  .MobileMenuButton {
+    width: 44px;
+    height: 44px;
+    top: 12px;
+    left: 12px;
+  }
+
+  .Header {
+    padding: 10px 16px 10px 64px;
+    font-size: 0.88rem;
+  }
+
+  .Header button {
+    padding: 8px 14px;
+    font-size: 0.88rem;
+  }
+
+  .SidebarPlaceholder .IntroLogo {
+    font-size: 2rem;
+  }
+
+  .SidebarSlogan {
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .AlphaWarning.sidebar-warning {
+    font-size: 0.82rem;
+    padding: 10px 14px;
+  }
+
+  .ComparisonMessageContent h2 {
+    font-size: 1.4rem;
+  }
+
+  .ComparisonMessageContent .ComparisonIntro {
+    font-size: 0.92rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .ComparisonCard {
+    padding: 1.3rem;
+    border-radius: 14px;
+  }
+
+  .ComparisonCard h3 {
+    font-size: 1rem;
+  }
+
+  .ComparisonCard p {
+    font-size: 0.9rem;
+    line-height: 1.65;
+  }
+
+  .SourceTag {
+    font-size: 0.75rem;
+  }
+
+  .Message {
+    padding: 12px 15px;
+    font-size: 0.93rem;
+    max-width: 95%;
+    border-radius: 12px;
+  }
+
+  .Message pre {
+    font-size: 0.85rem;
+    padding: 10px;
+  }
+
+  .Message h1 { font-size: 1.5em; }
+  .Message h2 { font-size: 1.3em; }
+  .Message h3 { font-size: 1.15em; }
+
+  .MessageList,
+  .MessageList.landing-list {
+    padding: 16px 12px;
+  }
+
+  .ChatForm {
+    padding: 12px;
+    gap: 8px;
+  }
+
+  .ChatForm input {
+    padding: 12px 14px;
+    font-size: 16px;
+  }
+
+  .ChatForm button {
+    padding: 12px 18px;
+    font-size: 0.95rem;
+  }
+
+  .ConvoItem {
+    padding: 14px 16px;
+    font-size: 0.92rem;
+  }
+
+  .NewChatBtn {
+    padding: 14px;
+    font-size: 0.98rem;
+  }
+
+  .LandingForm {
+    padding: 16px 18px;
+  }
+
+  .LandingForm p {
+    font-size: 1rem;
+    margin-bottom: 14px;
+  }
+
+  .LoginButton {
+    padding: 12px 24px;
+    font-size: 0.95rem;
+  }
+
+  .LoginModalContent {
+    padding: 2rem 1.5rem;
+    border-radius: 14px;
+  }
+
+  .LoginHeader {
+    font-size: 1.5rem;
+    margin-bottom: 1.8rem;
+  }
+
+  .AuthFormContainer input {
+    padding: 12px 14px !important;
+    font-size: 16px !important;
+  }
+
+  .AuthFormContainer button {
+    padding: 13px 16px !important;
+    font-size: 0.98rem !important;
+  }
+
+  .AuthFormContainer label {
+    font-size: 0.88rem;
+  }
+}
+
+/* --- Telas muito pequenas (até 360px) --- */
+@media (max-width: 360px) {
+  .Sidebar,
+  .Sidebar.landing-sidebar {
+    width: 85%;
+    max-width: 280px;
+  }
+
+  .SidebarPlaceholder .IntroLogo {
+    font-size: 1.8rem;
+  }
+
+  .SidebarSlogan {
+    font-size: 0.95rem;
+  }
+
+  .ComparisonCard {
+    padding: 1.2rem;
+  }
+
+  .Message {
+    max-width: 98%;
+    font-size: 0.9rem;
+  }
+
+  .MessageList,
+  .MessageList.landing-list {
+    padding: 12px 10px;
+  }
+
+  .ChatForm input {
+    padding: 11px 13px;
+  }
+
+  .ChatForm button {
+    padding: 11px 16px;
+  }
+}
+
+/* --- Paisagem em mobile (altura < 500px) --- */
+@media (max-height: 500px) and (orientation: landscape) {
+  .Sidebar,
+  .Sidebar.landing-sidebar {
+    width: 60%;
+    max-width: 280px;
+  }
+
+  .MessageList,
+  .MessageList.landing-list {
+    padding: 12px 16px;
+  }
+
+  .ChatForm {
+    padding: 10px;
+  }
+
+  .ChatForm input,
+  .ChatForm button {
+    padding: 10px 14px;
+  }
+
+  .LoginModalContent {
+    max-height: 95vh;
+    padding: 1.5rem;
+  }
+
+  .LoginHeader {
+    font-size: 1.3rem;
+    margin-bottom: 1.2rem;
+  }
+}
+
+/* ====================================================================
+   6. MELHORIAS DE ACESSIBILIDADE E UX
+==================================================================== */
+
+/* Foco visível para navegação por teclado */
+button:focus-visible,
+input:focus-visible,
+.ConvoItem:focus-visible,
+a:focus-visible {
+  outline: 3px solid #61ff81;
+  outline-offset: 2px;
+}
+
+/* Scroll suave */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Scrollbar customizada (Webkit) - Design Moderno */
+.MessageList::-webkit-scrollbar,
+.ConversationList::-webkit-scrollbar,
+.LoginModalContent::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.MessageList::-webkit-scrollbar-track,
+.ConversationList::-webkit-scrollbar-track,
+.LoginModalContent::-webkit-scrollbar-track {
+  background: #f7f9fa;
+  border-radius: 10px;
+}
+
+.MessageList::-webkit-scrollbar-thumb,
+.ConversationList::-webkit-scrollbar-thumb,
+.LoginModalContent::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #cbd5e0 0%, #a0aec0 100%);
+  border-radius: 10px;
+  border: 2px solid #f7f9fa;
+}
+
+.MessageList::-webkit-scrollbar-thumb:hover,
+.ConversationList::-webkit-scrollbar-thumb:hover,
+.LoginModalContent::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #a0aec0 0%, #718096 100%);
+}
+
+/* Scrollbar para Firefox */
+.MessageList,
+.ConversationList,
+.LoginModalContent {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e0 #f7f9fa;
+}
+
+/* Previne seleção de texto em botões */
+button,
+.MobileMenuButton,
+.NewChatBtn,
+.ConvoItem {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Suaviza todas as transições */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Animação de loading para mensagens sendo geradas */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.Message.loading {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* Estados de hover melhorados para touch devices */
+@media (hover: none) and (pointer: coarse) {
+  .ComparisonCard:hover,
+  .Message:hover {
+    transform: none;
+  }
+
+  .ConvoItem:hover {
+    background: inherit;
+  }
+}
+
+/* Modo escuro (preparado para futuro) */
+@media (prefers-color-scheme: dark) {
+  /* Descomente quando implementar modo escuro
+  :root {
+    --bg-primary: #1a202c;
+    --bg-secondary: #2d3748;
+    --text-primary: #f7fafc;
+    --text-secondary: #e2e8f0;
+  }
+  */
+}
+
+/* Reduz movimento para usuários com preferência */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

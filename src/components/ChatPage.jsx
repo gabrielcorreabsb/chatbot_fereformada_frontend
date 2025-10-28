@@ -1,8 +1,8 @@
-// src/ChatPage.jsx
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
+import Sidebar from './Sidebar.jsx'; // Importar
+import ChatWindow from './ChatWindow.jsx'; // Importar
 
-// O URL da sua API Spring Boot
 const API_URL = 'http://localhost:8080/api/v1/chat';
 
 export default function ChatPage({ session }) {
@@ -11,136 +11,118 @@ export default function ChatPage({ session }) {
     const [messages, setMessages] = useState([]);
     const [userInput, setUserInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const messageListRef = useRef(null); // Para rolar para o final
+    const [isSidebarOpenMobile, setIsSidebarOpenMobile] = useState(false); // NOVO: Estado do menu mobile
 
-    // Pega o token de acesso da sessão
     const accessToken = session.access_token;
+    const getAuthHeaders = () => ({ headers: { 'Authorization': `Bearer ${accessToken}` } });
 
-    // Função para criar o 'header' de autorização
-    const getAuthHeaders = () => ({
-        headers: { 'Authorization': `Bearer ${accessToken}` }
-    });
 
-    // 1. Carregar a lista de conversas (sidebar) ao iniciar
+    // --- Funções movidas/adaptadas para o ChatPage ---
     const fetchConversations = async () => {
         try {
             const response = await axios.get(API_URL, getAuthHeaders());
             setConversations(response.data);
         } catch (error) {
             console.error('Erro ao buscar conversas:', error);
+            alert('Erro ao carregar histórico de conversas.'); // Feedback ao usuário
         }
     };
 
-    // 2. Carregar mensagens de uma conversa específica
     const fetchMessages = async (chatId) => {
+        if (!chatId) return; // Não faz nada se chatId for nulo
+        setIsLoading(true); // Mostra loading na janela de chat
+        setMessages([]); // Limpa mensagens antigas
+        setCurrentChatId(chatId);
+        setIsSidebarOpenMobile(false); // Fecha sidebar no mobile ao selecionar chat
         try {
-            setIsLoading(true);
             const response = await axios.get(`${API_URL}/${chatId}`, getAuthHeaders());
             setMessages(response.data);
-            setCurrentChatId(chatId);
         } catch (error) {
             console.error('Erro ao buscar mensagens:', error);
+            alert('Erro ao carregar mensagens da conversa.');
         } finally {
             setIsLoading(false);
         }
     };
 
-    // 3. Enviar uma nova mensagem
+    const handleNewChat = () => {
+        setCurrentChatId(null);
+        setMessages([]);
+        setIsSidebarOpenMobile(false); // Fecha sidebar no mobile
+    };
+
     const handleSendMessage = async (e) => {
         e.preventDefault();
         if (!userInput.trim()) return;
 
         setIsLoading(true);
         const question = userInput;
-        const currentChatIdForRequest = currentChatId;
+        const chatIdForRequest = currentChatId;
 
-        // Adiciona a pergunta do usuário à UI imediatamente
-        setMessages(prev => [...prev, { role: 'user', content: question }]);
-        setUserInput(''); // Limpa o input
+        // Adiciona pergunta à UI imediatamente
+        // Usamos um ID temporário para a key, será substituído quando recarregar
+        setMessages(prev => [...prev, { id: `temp-${Date.now()}`, role: 'user', content: question }]);
+        setUserInput('');
 
         try {
-            // 3.A. Envia a pergunta para o back-end
             const response = await axios.post(API_URL,
-                { question: question, chatId: currentChatIdForRequest }, // O corpo (body)
-                getAuthHeaders() // O header de autorização
+                { question: question, chatId: chatIdForRequest },
+                getAuthHeaders()
             );
 
-            // 3.B. A API salvou a pergunta e a resposta. Adiciona a resposta da IA.
             const newChatId = response.data.chatId;
             const aiAnswer = response.data.answer;
 
-            setMessages(prev => [...prev, { role: 'assistant', content: aiAnswer }]);
-            setCurrentChatId(newChatId); // Define o ID do chat
+            // Adiciona resposta da IA à UI
+            setMessages(prev => [...prev, { id: `temp-${Date.now()+1}`, role: 'assistant', content: aiAnswer }]);
 
-            // 3.C. Se for um chat novo, recarrega a sidebar
-            if (!currentChatIdForRequest) {
+            // Se era um chat novo, atualiza o ID e recarrega a sidebar
+            if (!chatIdForRequest) {
+                setCurrentChatId(newChatId);
                 fetchConversations();
             }
 
+            // Poderíamos recarregar as mensagens aqui para ter os IDs corretos,
+            // mas para performance, atualizar a UI diretamente é melhor na maioria dos casos.
+            // fetchMessages(newChatId); // Opcional: recarrega tudo do backend
+
         } catch (error) {
             console.error('Erro ao enviar mensagem:', error);
-            setMessages(prev => [...prev, { role: 'assistant', content: 'Erro ao conectar. Tente novamente.' }]);
+            setMessages(prev => [...prev, { id: `temp-err-${Date.now()}`, role: 'assistant', content: 'Erro ao conectar. Tente novamente.' }]);
         } finally {
             setIsLoading(false);
         }
     };
 
-    // Efeito que roda uma vez: carregar as conversas
+    // Carrega conversas ao montar
     useEffect(() => {
         fetchConversations();
     }, []);
 
-    // Efeito para rolar para o final quando as mensagens mudarem
-    useEffect(() => {
-        if (messageListRef.current) {
-            messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
-        }
-    }, [messages]);
-
-
     return (
-        <div className="ChatPage">
-            {/* --- BARRA LATERAL --- */}
-            <aside className="Sidebar">
-                <button className="NewChatBtn" onClick={() => {
-                    setCurrentChatId(null);
-                    setMessages([]);
-                }}>
-                    + Novo Chat
-                </button>
-                {conversations.map(convo => (
-                    <div
-                        key={convo.id}
-                        className={`ConvoItem ${convo.id === currentChatId ? 'active' : ''}`}
-                        onClick={() => fetchMessages(convo.id)}
-                    >
-                        {convo.title}
-                    </div>
-                ))}
-            </aside>
+        // Adiciona classe condicional para o estado mobile
+        <div className={`ChatPage ${isSidebarOpenMobile ? 'sidebar-mobile-open' : ''}`}>
+            {/* Botão de Menu (só visível no mobile) */}
+            <button
+                className="MobileMenuButton"
+                onClick={() => setIsSidebarOpenMobile(!isSidebarOpenMobile)}
+            >
+                ☰ {/* Ícone de Hambúrguer */}
+            </button>
 
-            {/* --- JANELA DO CHAT --- */}
-            <main className="ChatWindow">
-                <div className="MessageList" ref={messageListRef}>
-                    {messages.map((msg, index) => (
-                        <div key={index} className={`Message ${msg.role}`}>
-                            {/* Usar <pre> preserva quebras de linha na resposta da IA */}
-                            <pre>{msg.content}</pre>
-                        </div>
-                    ))}
-                    {isLoading && <div className="Message assistant"><pre>Pensando...</pre></div>}
-                </div>
-                <form className="ChatForm" onSubmit={handleSendMessage}>
-                    <input
-                        type="text"
-                        value={userInput}
-                        onChange={(e) => setUserInput(e.target.value)}
-                        placeholder="Digite sua pergunta..."
-                        disabled={isLoading}
-                    />
-                    <button type="submit" disabled={isLoading}>Enviar</button>
-                </form>
-            </main>
+            <Sidebar
+                conversations={conversations}
+                currentChatId={currentChatId}
+                onSelectChat={fetchMessages} // Passa a função de buscar mensagens
+                onNewChat={handleNewChat}   // Passa a função de novo chat
+            />
+            <ChatWindow
+                messages={messages}
+                isLoading={isLoading}
+                userInput={userInput}
+                onInputChange={(e) => setUserInput(e.target.value)} // Passa a função de input
+                onSendMessage={handleSendMessage} // Passa a função de enviar
+            />
         </div>
     );
 }

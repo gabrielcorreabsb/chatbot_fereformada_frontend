@@ -1,9 +1,10 @@
 // src/App.jsx
-import { useState, useEffect } from 'react';
-import { Auth } from '@supabase/auth-ui-react';
-import { ThemeSupa } from '@supabase/auth-ui-shared';
-import { supabase } from './supabaseClient';
+import {useState, useEffect} from 'react';
+import {Auth} from '@supabase/auth-ui-react';
+import {ThemeSupa} from '@supabase/auth-ui-shared';
+import {supabase} from './supabaseClient';
 import ChatPage from './components/ChatPage.jsx';
+import LandingChatView from './components/LandingChatView.jsx';
 import './App.css';
 
 const ptBR_labels = {
@@ -26,92 +27,62 @@ const ptBR_labels = {
         link_text: "Esqueceu sua senha?",
         confirmation_text: "Verifique seu e-mail para o link de redefinição"
     },
-    magic_link: {
-    },
+    magic_link: {},
     update_password: {
         password_label: "Nova senha",
         password_input_placeholder: "Sua nova senha",
         button_label: "Atualizar senha",
     },
 };
-
 export default function App() {
     const [session, setSession] = useState(null);
+    const [showLoginModal, setShowLoginModal] = useState(false); // NOVO: Estado do Modal
 
     useEffect(() => {
+        // Verifica sessão inicial
         supabase.auth.getSession().then(({ data: { session } }) => {
             setSession(session);
         });
+        // Escuta mudanças de auth
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
             setSession(session);
+            // Se o usuário logar com sucesso, fecha o modal
+            if (session) {
+                setShowLoginModal(false);
+            }
         });
         return () => subscription.unsubscribe();
     }, []);
 
-    // --- SE NÃO ESTIVER LOGADO (PÁGINA DE LOGIN) ---
+    // --- SE NÃO ESTIVER LOGADO ---
     if (!session) {
         return (
-            <div className="HomePageContainer">
+            <div className="LandingPage">
+                {/* Renderiza a "prévia" do chat */}
+                <LandingChatView onLoginClick={() => setShowLoginModal(true)} />
 
-                {/* Coluna da Esquerda: A Apresentação */}
-                <div className="IntroColumn">
-                    <h1 className="IntroLogo">IA Fé Reformada</h1>
-
-                    <div className="AlphaWarning">
-                        <strong>Versão Alpha (v0.1.0):</strong> Este é um projeto em desenvolvimento inicial.
-                        As respostas podem conter erros de estrutura ou não ser perfeitas, aguardamos o seu feedback para melhoras.
-                    </div>
-
-                    <hr className="IntroDivider" />
-
-
-                    <h2>Qual a diferença de uma IA convencional?</h2>
-                    <p>
-                        IAs comuns (como o ChatGPT ou Gemini) são treinadas com toda a internet.
-                        Suas respostas podem ser vagas, seculares ou conter erros teológicos.
-                    </p>
-
-                    <h2>Uma IA Focada</h2>
-                    <p>
-                        Esta IA é diferente. Ela <strong>não usa a internet</strong> para formular respostas.
-                        O conhecimento dela é baseado <strong>exclusivamente</strong> em fontes fiéis da Tradição Reformada:
-                    </p>
-                    <ul>
-                        <li>A Bíblia Sagrada (com notas da Bíblia de Genebra)</li>
-                        <li>Confissão de Fé de Westminster</li>
-                        <li>Catecismos Maior e Breve</li>
-                        <li>As Institutas de João Calvino</li>
-                        <li>Teologia Sistemática de Berkhof</li>
-                        <li>Entre outros textos que serão adicionados!</li>
-                    </ul>
-                    <p>
-                        Isso garante que você receberá respostas alinhadas com a doutrina,
-                        sem "achismos" ou influências seculares
-                    </p>
-                </div>
-
-                {/* Coluna da Direita: O "Card" de Login */}
-                <div className="LoginColumn">
-                    <div className="LoginContainer">
-                        <h2 className="LoginHeader">Acesse sua conta</h2>
-                        <p className="LoginSubheader">Faça login para iniciar seu estudo.</p>
-                        <div className="AuthFormContainer">
+                {/* O Modal de Login (só aparece se showLoginModal for true) */}
+                {showLoginModal && (
+                    <div className="LoginModalOverlay">
+                        <div className="LoginModalContent">
+                            <button className="CloseModalButton" onClick={() => setShowLoginModal(false)}>×</button>
+                            <h2 className="LoginHeader">Acesse sua conta</h2>
                             <Auth
                                 supabaseClient={supabase}
                                 appearance={{ theme: ThemeSupa }}
                                 theme="light"
                                 providers={['google']}
-                                localization={{ variables: ptBR_labels }} //
+                                localization={{ variables: ptBR_labels }}
+                                view="sign_in" // Começa na tela de login
                             />
                         </div>
                     </div>
-                </div>
-
+                )}
             </div>
         );
     }
 
-    // --- SE ESTIVER LOGADO (PÁGINA DE CHAT) ---
+    // --- SE ESTIVER LOGADO ---
     return (
         <div className="App">
             <header className="Header">
