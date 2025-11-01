@@ -3,9 +3,12 @@ import {useState, useEffect} from 'react';
 import {Auth} from '@supabase/auth-ui-react';
 import {ThemeSupa} from '@supabase/auth-ui-shared';
 import {supabase} from './supabaseClient';
+import { jwtDecode } from 'jwt-decode';
 import ChatPage from './components/ChatPage.jsx';
 import LandingChatView from './components/LandingChatView.jsx';
+import { useAuth } from './AuthContext';
 import './App.css';
+import { Link } from 'react-router-dom';
 
 const ptBR_labels = {
     sign_in: {
@@ -35,33 +38,34 @@ const ptBR_labels = {
     },
 };
 export default function App() {
-    const [session, setSession] = useState(null);
-    const [showLoginModal, setShowLoginModal] = useState(false); // NOVO: Estado do Modal
+    const { session } = useAuth(); // Pega a sessão do Contexto
+
+    const [showLoginModal, setShowLoginModal] = useState(false);
+    const [userRoles, setUserRoles] = useState([]); // <-- NOVO: Estado para as roles
 
     useEffect(() => {
-        // Verifica sessão inicial
-        supabase.auth.getSession().then(({ data: { session } }) => {
-            setSession(session);
-        });
-        // Escuta mudanças de auth
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-            setSession(session);
-            // Se o usuário logar com sucesso, fecha o modal
-            if (session) {
-                setShowLoginModal(false);
+        if (session) {
+            setShowLoginModal(false); // Fecha o modal se logar
+
+            // NOVO: Decodifica o token para encontrar as roles
+            try {
+                const decodedToken = jwtDecode(session.access_token);
+                setUserRoles(decodedToken.roles || []);
+            } catch (e) {
+                console.error("Erro ao decodificar token:", e);
+                setUserRoles([]);
             }
-        });
-        return () => subscription.unsubscribe();
-    }, []);
+        } else {
+            setUserRoles([]); // Limpa as roles se deslogar
+        }
+    }, [session]); // Roda sempre que a sessão mudar
 
     // --- SE NÃO ESTIVER LOGADO ---
     if (!session) {
         return (
             <div className="LandingPage">
-                {/* Renderiza a "prévia" do chat */}
                 <LandingChatView onLoginClick={() => setShowLoginModal(true)} />
 
-                {/* O Modal de Login (só aparece se showLoginModal for true) */}
                 {showLoginModal && (
                     <div className="LoginModalOverlay">
                         <div className="LoginModalContent">
@@ -73,7 +77,7 @@ export default function App() {
                                 theme="light"
                                 providers={['google']}
                                 localization={{ variables: ptBR_labels }}
-                                view="sign_in" // Começa na tela de login
+                                view="sign_in"
                             />
                         </div>
                     </div>
@@ -83,13 +87,23 @@ export default function App() {
     }
 
     // --- SE ESTIVER LOGADO ---
+    const isPrivilegedUser = userRoles.includes('ADMIN') || userRoles.includes('MODERATOR');
+
     return (
         <div className="App">
             <header className="Header">
+                {/* NOVO: Link condicional para o Painel Admin */}
+                {isPrivilegedUser && (
+                    <Link to="/admin" className="admin-link-button">
+                        Painel Admin
+                    </Link>
+                )}
                 <span>Logado como: {session.user.email}</span>
                 <button onClick={() => supabase.auth.signOut()}>Sair</button>
             </header>
             <ChatPage session={session} />
         </div>
     );
+
+
 }

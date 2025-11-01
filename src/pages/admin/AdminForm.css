@@ -1,0 +1,116 @@
+/* src/pages/admin/AdminForm.css */
+
+/* === Estilos do Modal === */
+.admin-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.admin-modal-content {
+    background-color: white;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.admin-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.admin-modal-header h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.admin-modal-close-btn {
+    font-size: 1.75rem;
+    font-weight: bold;
+    color: #64748b;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.admin-modal-content .admin-form {
+    padding: 1.5rem;
+    overflow-y: auto;
+    box-shadow: none; /* Remove sombra dupla dentro do modal */
+}
+
+/* === Estilos de Formulário === */
+.admin-form-group {
+    margin-bottom: 1.5rem;
+}
+
+.admin-form-group label {
+    display: block;
+    font-weight: 500;
+    color: #334155;
+    margin-bottom: 0.5rem;
+}
+
+.admin-form-group input[type="text"],
+.admin-form-group input[type="date"],
+.admin-form-group input[type="number"],
+.admin-form-group select,
+.admin-form-group textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 1rem;
+    box-sizing: border-box; /* Garante que o padding não quebre o layout */
+    font-family: 'Inter', sans-serif; /* Garante a mesma fonte */
+}
+
+.admin-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+.admin-form-actions button {
+    padding: 0.6rem 1.2rem;
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+}
+
+.admin-form-actions button[type="submit"] {
+    background-color: #4f46e5; /* Roxo */
+    color: white;
+}
+
+.admin-form-actions button[type="button"] {
+    background-color: #e2e8f0; /* Cinza */
+    color: #334155;
+}
+
+.admin-form-error {
+    background-color: #fef2f2;
+    color: #dc2626;
+    padding: 1rem;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+}

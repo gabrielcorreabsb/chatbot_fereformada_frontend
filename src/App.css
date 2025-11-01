@@ -281,6 +281,21 @@
   transform: translateY(0);
 }
 
+/*CHAT ADMIN BOTÃO*/
+.Header .admin-link-button {
+  padding: 6px 12px;
+  background-color: #4f46e5; /* Roxo */
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.Header .admin-link-button:hover {
+  background-color: #4338ca;
+}
+
 /* ====================================================================
    2. CHAT PAGE (QUANDO LOGADO)
 ==================================================================== */
@@ -437,6 +452,7 @@
   flex-direction: column;
   background: linear-gradient(to bottom, #fafbfc 0%, #ffffff 100%);
 }
+
 
 /* ====================================================================
    3. COMPONENTES COMPARTILHADOS

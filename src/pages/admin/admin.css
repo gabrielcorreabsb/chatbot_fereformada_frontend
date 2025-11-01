@@ -1,0 +1,114 @@
+/* src/pages/admin/Admin.css */
+
+.admin-layout {
+    display: flex;
+    min-height: 100vh;
+    /* Usamos a fonte 'Inter' do seu index.css, o que é ótimo! */
+}
+
+/* === Sidebar (Menu Lateral) === */
+.admin-sidebar {
+    width: 240px;
+    background-color: #1e293b; /* Um azul-escuro (slate-800) */
+    color: #f1f5f9; /* Texto claro (slate-100) */
+    padding: 1.5rem 1rem;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+}
+
+.admin-sidebar-header {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: white;
+    margin-bottom: 2rem;
+    padding-left: 0.5rem;
+}
+
+.admin-sidebar nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.admin-sidebar nav a {
+    color: #cbd5e1; /* slate-300 */
+    text-decoration: none;
+    font-weight: 500;
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+    transition: all 0.2s ease-in-out;
+}
+
+.admin-sidebar nav a:hover {
+    background-color: #334155; /* slate-700 */
+    color: white;
+}
+
+/* Estilo do link ativo (fornecido pelo NavLink) */
+.admin-sidebar nav a.active {
+    background-color: #4f46e5; /* Um roxo (indigo-600) */
+    color: white;
+}
+
+.admin-sidebar-footer {
+    margin-top: auto; /* Empurra o botão de Sair para o final */
+}
+
+.admin-sidebar-footer button {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background-color: #dc2626; /* red-600 */
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.admin-sidebar-footer button:hover {
+    background-color: #b91c1c; /* red-700 */
+}
+
+
+/* === Área de Conteúdo Principal === */
+.admin-content {
+    flex-grow: 1;
+    background-color: #f8fafc; /* Um cinza-claro (slate-50) */
+    padding: 2rem 3rem;
+    height: 100vh;
+    overflow-y: auto;
+}
+
+.admin-content h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1e293b; /* slate-800 */
+    margin-top: 0;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid #e2e8f0; /* slate-200 */
+    padding-bottom: 1rem;
+}
+
+/* Estilos de formulário genéricos (vamos usar mais tarde) */
+.admin-form {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    max-width: 800px;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.admin-table th, .admin-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
+}
