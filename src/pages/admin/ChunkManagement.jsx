@@ -1,47 +1,51 @@
 // src/pages/admin/ChunkManagement.jsx
 import React, { useState, useEffect, useCallback } from 'react';
-import { useParams, Link } from 'react-router-dom'; // <-- Importa useParams
+import { useParams, Link } from 'react-router-dom';
 import { useAuth } from '../../AuthContext';
 import { apiClient } from '../../apiClient';
-import ChunkFormModal from './ChunkFormModal'; // <-- Importa o Modal
+import ChunkFormModal from './ChunkFormModal';
 import { jwtDecode } from 'jwt-decode';
+import LoadingSpinner from '../../components/LoadingSpinner';
+import ChunkPreviewModal from './ChunkPreviewModal';
+import BulkTopicModal from './BulkTopicModal'; // <-- NOVO IMPORT
 
 export default function ChunkManagement() {
-    // 1. Pega o ID da obra da URL (ex: /admin/works/17/chunks)
     const { workId } = useParams();
-
     const [chunks, setChunks] = useState([]);
-    const [work, setWork] = useState(null); // Para mostrar o título da obra
+    const [work, setWork] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [chunkToEdit, setChunkToEdit] = useState(null);
     const { session } = useAuth();
+    const [currentPage, setCurrentPage] = useState(0);
+    const [totalPages, setTotalPages] = useState(0);
+    const [previewChunk, setPreviewChunk] = useState(null);
+    const [isModalLoading, setIsModalLoading] = useState(false);
+
+    // --- ESTADOS PARA AÇÕES EM MASSA ---
+    const [selectedChunkIds, setSelectedChunkIds] = useState(new Set());
+    const [isTopicModalOpen, setIsTopicModalOpen] = useState(false);
 
     const decodedToken = session ? jwtDecode(session.access_token) : null;
     const userRoles = decodedToken?.roles || [];
     const isAdmin = userRoles.includes('ADMIN');
-    const isModerator = userRoles.includes('MODERATOR'); // Moderadores podem editar chunks
+    const isModerator = userRoles.includes('MODERATOR');
 
-    // 2. Busca os chunks PARA ESTA OBRA
-    const fetchData = useCallback(async () => {
+    const fetchData = useCallback(async (pageToFetch = 0) => {
         if (!session || !workId) return;
         setLoading(true);
         setError(null);
+        setSelectedChunkIds(new Set()); // Limpa seleção ao trocar de página
         try {
-            // Vamos buscar os chunks E os detalhes da obra
             const [chunksResponse, workResponse] = await Promise.all([
-                apiClient.get(`/admin/works/${workId}/chunks`, { // Endpoint de Chunks da Obra
-                    headers: { Authorization: `Bearer ${session.access_token}` }
-                }),
-                apiClient.get(`/admin/works/${workId}`, { // Endpoint da Obra (para o título)
-                    headers: { Authorization: `Bearer ${session.access_token}` }
-                })
+                apiClient.get(`/admin/works/${workId}/chunks?page=${pageToFetch}`, { headers: { Authorization: `Bearer ${session.access_token}` } }),
+                apiClient.get(`/admin/works/${workId}`, { headers: { Authorization: `Bearer ${session.access_token}` } })
             ]);
-
             setChunks(chunksResponse.data.content || []);
-            setWork(workResponse.data || null); // Salva os detalhes da obra
-
+            setCurrentPage(chunksResponse.data.number || 0);
+            setTotalPages(chunksResponse.data.totalPages || 0);
+            setWork(workResponse.data || null);
         } catch (err) {
             console.error("Falha ao buscar chunks:", err);
             setError("Não foi possível carregar os chunks.");
@@ -51,122 +55,245 @@ export default function ChunkManagement() {
     }, [session, workId]);
 
     useEffect(() => {
-        fetchData();
-    }, [fetchData]);
+        fetchData(currentPage);
+    }, [fetchData, currentPage]);
 
-    const handleOpenModal = (chunk = null) => {
-        setChunkToEdit(chunk);
-        setIsModalOpen(true);
-    };
+    const handleCloseModal = () => { setIsModalOpen(false); setChunkToEdit(null); };
+    const handleSave = () => { handleCloseModal(); fetchData(currentPage); };
 
-    const handleCloseModal = () => {
-        setIsModalOpen(false);
-        setChunkToEdit(null);
-    };
-
-    const handleSave = () => {
-        handleCloseModal();
-        fetchData(); // Recarrega
-    };
-
+    // (handleDelete, handleOpenModal, handleOpenPreview... sem mudanças do arquivo anterior)
     const handleDelete = async (chunkId) => {
-        if (!window.confirm("Tem certeza que deseja deletar este bloco de conteúdo?")) {
+        if (!window.confirm("Tem certeza que deseja deletar este bloco de conteúdo?")) { return; }
+        try {
+            await apiClient.delete(`/admin/chunks/${chunkId}`, { headers: { Authorization: `Bearer ${session.access_token}` } });
+            fetchData(currentPage);
+        } catch (err) { alert(err.response?.data?.message || "Erro ao deletar."); }
+    };
+    const handleOpenModal = async (chunkId) => {
+        if (!chunkId) { setChunkToEdit(null); setIsModalOpen(true); return; }
+        setIsModalLoading(true);
+        try {
+            const response = await apiClient.get(`/admin/chunks/${chunkId}`, { headers: { Authorization: `Bearer ${session.access_token}` } });
+            setChunkToEdit(response.data);
+            setIsModalOpen(true);
+        } catch (err) { alert("Não foi possível carregar os dados completos do chunk."); }
+        finally { setIsModalLoading(false); }
+    };
+    const handleOpenPreview = async (chunkId) => {
+        setIsModalLoading(true);
+        try {
+            const response = await apiClient.get(`/admin/chunks/${chunkId}`, { headers: { Authorization: `Bearer ${session.access_token}` } });
+            setPreviewChunk(response.data);
+        } catch (err) { alert("Não foi possível carregar os dados completos do chunk."); }
+        finally { setIsModalLoading(false); }
+    };
+
+    // --- NOVA LÓGICA DE SELEÇÃO ---
+    const handleSelectOne = (chunkId) => {
+        const newSelection = new Set(selectedChunkIds);
+        if (newSelection.has(chunkId)) {
+            newSelection.delete(chunkId);
+        } else {
+            newSelection.add(chunkId);
+        }
+        setSelectedChunkIds(newSelection);
+    };
+
+    const handleSelectAll = (e) => {
+        if (e.target.checked) {
+            setSelectedChunkIds(new Set(chunks.map(c => c.id)));
+        } else {
+            setSelectedChunkIds(new Set());
+        }
+    };
+
+    const areAllOnPageSelected = chunks.length > 0 && chunks.every(c => selectedChunkIds.has(c.id));
+
+    // --- NOVAS FUNÇÕES DE AÇÃO EM MASSA (Frontend) ---
+    const handleDeleteSelected = async () => {
+        if (!window.confirm(`Tem certeza que deseja deletar ${selectedChunkIds.size} chunks?`)) {
             return;
         }
-
         try {
-            await apiClient.delete(`/admin/chunks/${chunkId}`, {
-                headers: { Authorization: `Bearer ${session.access_token}` }
+            // (Isso chamará o endpoint do backend que ainda vamos criar)
+            await apiClient.delete('/admin/chunks/bulk-delete', {
+                headers: { Authorization: `Bearer ${session.access_token}` },
+                data: { ids: Array.from(selectedChunkIds) }
             });
-            fetchData(); // Recarrega
+            fetchData(currentPage);
         } catch (err) {
-            console.error("Falha ao deletar chunk:", err);
+            console.error("Falha ao deletar chunks em massa:", err);
             alert(err.response?.data?.message || "Erro ao deletar.");
         }
     };
 
-    if (loading) return <h1>Carregando conteúdo...</h1>;
-    if (error) return <h1 style={{ color: 'red' }}>{error}</h1>;
+    const handleBulkTopicsSaved = () => {
+        setIsTopicModalOpen(false);
+        fetchData(currentPage); // Recarrega para mostrar tópicos atualizados
+    };
+
+    if (loading) return <LoadingSpinner />;
+    if (error) return <div className="message-box error">{error}</div>; //
 
     return (
-        <div>
-            {isModalOpen && (
-                <ChunkFormModal
+        <div className="content-box" style={{ position: 'relative' }}>
+            {isModalLoading && <LoadingSpinner />}
+
+            {isModalOpen && ( <ChunkFormModal session={session} workId={workId} chunkToEdit={chunkToEdit} onSave={handleSave} onClose={handleCloseModal} /> )}
+            {previewChunk && ( <ChunkPreviewModal chunk={previewChunk} onClose={() => setPreviewChunk(null)} /> )}
+
+            {/* NOVO MODAL DE TÓPICOS */}
+            {isTopicModalOpen && (
+                <BulkTopicModal
                     session={session}
-                    workId={workId} // Passa o ID da Obra para o modal
-                    chunkToEdit={chunkToEdit}
-                    onSave={handleSave}
-                    onClose={handleCloseModal}
+                    selectedChunkIds={Array.from(selectedChunkIds)}
+                    onSave={handleBulkTopicsSaved}
+                    onClose={() => setIsTopicModalOpen(false)}
                 />
             )}
 
-            {/* Navegação "Breadcrumb" */}
             <h3>
-                <Link to="/admin/works">Obras</Link> / {work ? work.title : 'Carregando...'}
+                <Link to="/admin/works" className="content-link">Obras</Link> / {work ? work.title : 'Carregando...'}
             </h3>
             <h1>Gerenciar Conteúdo (Chunks)</h1>
 
-            {/* Admins e Moderadores podem criar/editar chunks */}
             {(isAdmin || isModerator) && (
                 <button
                     onClick={() => handleOpenModal(null)}
-                    style={{ marginBottom: '1.5rem', padding: '10px 15px' }}
+                    className="btn btn-primary" //
+                    style={{ marginBottom: '1.5rem' }}
                 >
                     + Adicionar Novo Bloco
                 </button>
             )}
 
-            <table className="admin-table">
-                <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Cap/Perg Nº</th>
-                    <th>Pergunta / Conteúdo</th>
-                    <th>Tópicos</th>
-                    <th>Ações</th>
-                </tr>
-                </thead>
-                <tbody>
-                {chunks.length === 0 ? (
+            {/* NOVA BARRA DE AÇÕES EM MASSA */}
+            {selectedChunkIds.size > 0 && (isAdmin || isModerator) && (
+                <div className="bulk-action-bar">
+                    <strong>{selectedChunkIds.size} selecionado(s)</strong>
+                    <button
+                        className="btn btn-secondary btn-sm" //
+                        onClick={() => setIsTopicModalOpen(true)}
+                        disabled={!isAdmin}
+                    >
+                        Adicionar Tópicos...
+                    </button>
+                    <button
+                        className="btn btn-danger btn-sm" //
+                        onClick={handleDeleteSelected}
+                        disabled={!isAdmin}
+                    >
+                        Deletar Selecionados
+                    </button>
+                    {!isAdmin && <small>(Apenas Admins podem executar ações em massa)</small>}
+                </div>
+            )}
+
+            {/* WRAPPER RESPONSIVO (do seu CSS) */}
+            <div className="table-responsive">
+                <table className="admin-table">
+                    <thead>
                     <tr>
-                        <td colSpan="5">Nenhum bloco de conteúdo encontrado para esta obra.</td>
+                        <th className="checkbox-cell">
+                            <input
+                                type="checkbox"
+                                checked={areAllOnPageSelected}
+                                onChange={handleSelectAll}
+                            />
+                        </th>
+                        <th>ID</th>
+                        <th>Cap/Perg Nº</th>
+                        <th>Pergunta / Conteúdo</th>
+                        <th>Tópicos</th>
+                        <th>Ações</th>
                     </tr>
-                ) : (
-                    chunks.map((chunk) => (
-                        <tr key={chunk.id}>
-                            <td>{chunk.id}</td>
-                            <td>
-                                {/* Mostra Cap. e Seção */}
-                                {chunk.chapterNumber && `Cap ${chunk.chapterNumber}`}
-                                {chunk.sectionNumber && ` / Sec ${chunk.sectionNumber}`}
-                                {!chunk.chapterNumber && chunk.sectionNumber && `Perg. ${chunk.sectionNumber}`}
-                            </td>
-                            <td>
-                                {/* Mostra a Pergunta (se existir) ou o início do Conteúdo */}
-                                <strong>{chunk.question ? chunk.question.substring(0, 100) + '...' : ''}</strong>
-                                {!chunk.question && chunk.content ? chunk.content.substring(0, 100) + '...' : ''}
-                            </td>
-                            <td>
-                                {/* Mostra os tópicos associados */}
-                                {chunk.topics.length > 0 ? (
-                                    <span style={{fontSize: '0.9em', color: '#64748b'}}>
-                      {chunk.topics.map(t => t.name).join(', ')}
-                    </span>
-                                ) : 'N/A'}
-                            </td>
-                            <td>
-                                {(isAdmin || isModerator) && (
-                                    <button onClick={() => handleOpenModal(chunk)}>Editar</button>
-                                )}
-                                {isAdmin && (
-                                    <button onClick={() => handleDelete(chunk.id)} style={{ marginLeft: 8 }}>Deletar</button>
-                                )}
-                            </td>
+                    </thead>
+                    <tbody>
+                    {chunks.length === 0 ? (
+                        <tr>
+                            <td colSpan="6">Nenhum bloco de conteúdo encontrado para esta obra.</td>
                         </tr>
-                    ))
-                )}
-                </tbody>
-            </table>
+                    ) : (
+                        chunks.map((chunk) => (
+                            <tr key={chunk.id} className={selectedChunkIds.has(chunk.id) ? 'row-selected' : ''}>
+                                <td data-label="Selecionar" className="checkbox-cell">
+                                    <input
+                                        type="checkbox"
+                                        checked={selectedChunkIds.has(chunk.id)}
+                                        onChange={() => handleSelectOne(chunk.id)}
+                                    />
+                                </td>
+                                <td data-label="ID">{chunk.id}</td>
+                                <td data-label="Cap/Perg">
+                                    {chunk.chapterNumber && `Cap ${chunk.chapterNumber}`}
+                                    {chunk.sectionNumber && ` / Sec ${chunk.sectionNumber}`}
+                                    {!chunk.chapterNumber && chunk.sectionNumber && `Perg. ${chunk.sectionNumber}`}
+                                </td>
+                                <td data-label="Conteúdo">
+                                    <strong>{chunk.question ? chunk.question.substring(0, 100) + '...' : ''}</strong>
+                                    {!chunk.question && chunk.content ? chunk.content.substring(0, 100) + '...' : ''}
+                                </td>
+                                <td data-label="Tópicos">
+                                    {chunk.topics && chunk.topics.length > 0 ? (
+                                        <span style={{ fontSize: '0.9em', color: 'var(--color-text-muted)' }}>
+                                                {chunk.topics.map(t => t.name).join(', ')}
+                                            </span>
+                                    ) : 'N/A'}
+                                </td>
+                                <td data-label="Ações" className="table-actions">
+                                    <button
+                                        onClick={() => handleOpenPreview(chunk.id)}
+                                        className="btn btn-secondary btn-sm" //
+                                        disabled={isModalLoading}
+                                    >
+                                        Ver
+                                    </button>
+                                    {(isAdmin || isModerator) && (
+                                        <button
+                                            onClick={() => handleOpenModal(chunk.id)}
+                                            className="btn btn-secondary btn-sm" //
+                                            disabled={isModalLoading}
+                                        >
+                                            Editar
+                                        </button>
+                                    )}
+                                    {isAdmin && (
+                                        <button
+                                            onClick={() => handleDelete(chunk.id)}
+                                            className="btn btn-danger btn-sm" //
+                                            disabled={isModalLoading}
+                                        >
+                                            Deletar
+                                        </button>
+                                    )}
+                                </td>
+                            </tr>
+                        ))
+                    )}
+                    </tbody>
+                </table>
+            </div>
+
+            {/* (Paginação... sem mudanças) */}
+            <div className="flex justify-between items-center mt-4">
+                <button
+                    onClick={() => fetchData(currentPage - 1)}
+                    disabled={currentPage === 0 || loading}
+                    className="btn btn-secondary" //
+                >
+                    Anterior
+                </button>
+                <span>
+                    Página {currentPage + 1} de {totalPages}
+                </span>
+                <button
+                    onClick={() => fetchData(currentPage + 1)}
+                    disabled={currentPage + 1 >= totalPages || loading}
+                    className="btn btn-secondary" //
+                >
+                    Próxima
+                </button>
+            </div>
         </div>
     );
 }

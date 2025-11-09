@@ -38,16 +38,13 @@ const ptBR_labels = {
     },
 };
 export default function App() {
-    const { session } = useAuth(); // Pega a sessão do Contexto
-
+    const { session } = useAuth();
     const [showLoginModal, setShowLoginModal] = useState(false);
-    const [userRoles, setUserRoles] = useState([]); // <-- NOVO: Estado para as roles
+    const [userRoles, setUserRoles] = useState([]);
 
     useEffect(() => {
         if (session) {
-            setShowLoginModal(false); // Fecha o modal se logar
-
-            // NOVO: Decodifica o token para encontrar as roles
+            setShowLoginModal(false);
             try {
                 const decodedToken = jwtDecode(session.access_token);
                 setUserRoles(decodedToken.roles || []);
@@ -56,9 +53,9 @@ export default function App() {
                 setUserRoles([]);
             }
         } else {
-            setUserRoles([]); // Limpa as roles se deslogar
+            setUserRoles([]);
         }
-    }, [session]); // Roda sempre que a sessão mudar
+    }, [session]);
 
     // --- SE NÃO ESTIVER LOGADO ---
     if (!session) {
@@ -92,18 +89,23 @@ export default function App() {
     return (
         <div className="App">
             <header className="Header">
-                {/* NOVO: Link condicional para o Painel Admin */}
                 {isPrivilegedUser && (
-                    <Link to="/admin" className="admin-link-button">
+                    // 1. "BOTÃO MELHOR" APLICADO (substitui 'admin-link-button')
+                    <Link to="/admin" className="btn btn-secondary">
                         Painel Admin
                     </Link>
                 )}
                 <span>Logado como: {session.user.email}</span>
-                <button onClick={() => supabase.auth.signOut()}>Sair</button>
+
+                {/* 2. ESTILO GLOBAL APLICADO AO BOTÃO "SAIR" */}
+                <button
+                    onClick={() => supabase.auth.signOut()}
+                    className="btn btn-danger" // (Usando a classe de perigo)
+                >
+                    Sair
+                </button>
             </header>
             <ChatPage session={session} />
         </div>
     );
-
-
 }

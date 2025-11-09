@@ -2,22 +2,23 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../../AuthContext';
 import { apiClient } from '../../apiClient';
-import AuthorFormModal from './AuthorFormModal'; // <-- Importa o NOVO modal
-import { jwtDecode } from 'jwt-decode'; // <-- Importa para checar a role
+import AuthorFormModal from './AuthorFormModal';
+import { jwtDecode } from 'jwt-decode';
+import LoadingSpinner from '../../components/LoadingSpinner'; // <-- 1. ADICIONADO
 
 export default function AuthorManagement() {
+    // (Estados... sem mudanças)
     const [authors, setAuthors] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [authorToEdit, setAuthorToEdit] = useState(null); // <-- Para saber se estamos editando
+    const [authorToEdit, setAuthorToEdit] = useState(null);
     const { session } = useAuth();
-
-    // Decodifica o token para saber se é ADMIN
     const decodedToken = session ? jwtDecode(session.access_token) : null;
     const userRoles = decodedToken?.roles || [];
     const isAdmin = userRoles.includes('ADMIN');
 
+    // (fetchData... sem mudanças)
     const fetchData = useCallback(async () => {
         if (!session) return;
         setLoading(true);
@@ -39,44 +40,34 @@ export default function AuthorManagement() {
         fetchData();
     }, [fetchData]);
 
-    const handleOpenModal = (author = null) => {
-        setAuthorToEdit(author); // Se 'author' for null, é "Criar", se não, é "Editar"
-        setIsModalOpen(true);
-    };
+    // (handleOpenModal, handleCloseModal, handleSave... sem mudanças)
+    const handleOpenModal = (author = null) => { setAuthorToEdit(author); setIsModalOpen(true); };
+    const handleCloseModal = () => { setIsModalOpen(false); setAuthorToEdit(null); };
+    const handleSave = () => { handleCloseModal(); fetchData(); };
 
-    const handleCloseModal = () => {
-        setIsModalOpen(false);
-        setAuthorToEdit(null); // Limpa o estado de edição
-    };
-
-    const handleSave = () => {
-        handleCloseModal();
-        fetchData(); // Recarrega a tabela
-    };
-
+    // (handleDelete... sem mudanças)
     const handleDelete = async (authorId) => {
         if (!window.confirm("Tem certeza que deseja deletar este autor? Esta ação não pode ser desfeita.")) {
             return;
         }
-
         try {
             await apiClient.delete(`/admin/authors/${authorId}`, {
                 headers: { Authorization: `Bearer ${session.access_token}` }
             });
-            fetchData(); // Recarrega
+            fetchData();
         } catch (err) {
             console.error("Falha ao deletar autor:", err);
-            // Mostra o erro de "não pode deletar" que configuramos no backend
             alert(err.response?.data?.message || "Erro ao deletar.");
         }
     };
 
-
-    if (loading) return <h1>Carregando autores...</h1>;
-    if (error) return <h1 style={{ color: 'red' }}>{error}</h1>;
+    // --- 2. ATUALIZADO (Loading/Error) ---
+    if (loading) return <LoadingSpinner />;
+    if (error) return <div className="message-box error">{error}</div>;
 
     return (
-        <div>
+        // --- 3. ATUALIZADO (Container) ---
+        <div className="content-box">
             {isModalOpen && (
                 <AuthorFormModal
                     session={session}
@@ -88,11 +79,12 @@ export default function AuthorManagement() {
 
             <h1>Gerenciar Autores</h1>
 
-            {/* Só mostra o botão "Adicionar" se for ADMIN */}
             {isAdmin && (
+                // --- 4. ATUALIZADO (Botão) ---
                 <button
-                    onClick={() => handleOpenModal(null)} // 'null' significa modo "Criar"
-                    style={{ marginBottom: '1.5rem', padding: '10px 15px' }}
+                    onClick={() => handleOpenModal(null)}
+                    className="btn btn-primary"
+                    style={{ marginBottom: '1.5rem' }}
                 >
                     + Adicionar Novo Autor
                 </button>
@@ -104,7 +96,7 @@ export default function AuthorManagement() {
                     <th>ID</th>
                     <th>Nome</th>
                     <th>Era</th>
-                    {isAdmin && <th>Ações</th>} {/* Só mostra a coluna se for ADMIN */}
+                    {isAdmin && <th>Ações</th>}
                 </tr>
                 </thead>
                 <tbody>
@@ -119,9 +111,21 @@ export default function AuthorManagement() {
                             <td>{author.name}</td>
                             <td>{author.era}</td>
                             {isAdmin && (
-                                <td>
-                                    <button onClick={() => handleOpenModal(author)}>Editar</button>
-                                    <button onClick={() => handleDelete(author.id)} style={{ marginLeft: 8 }}>Deletar</button>
+                                // --- 5. ATUALIZADO (Botões da Tabela) ---
+                                <td className="table-actions">
+                                    <button
+                                        onClick={() => handleOpenModal(author)}
+                                        className="btn btn-secondary"
+                                    >
+                                        Editar
+                                    </button>
+                                    <button
+                                        onClick={() => handleDelete(author.id)}
+                                        className="btn btn-danger"
+                                        style={{ marginLeft: '0.5rem' }}
+                                    >
+                                        Deletar
+                                    </button>
                                 </td>
                             )}
                         </tr>

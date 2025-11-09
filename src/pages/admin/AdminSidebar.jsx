@@ -1,7 +1,6 @@
 // src/pages/admin/AdminSidebar.jsx
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-// Importe seu cliente Supabase
 import { supabase } from '../../supabaseClient'; // Ajuste este caminho!
 
 export default function AdminSidebar() {
@@ -25,6 +24,7 @@ export default function AdminSidebar() {
                 <NavLink to="/admin/works">Obras</NavLink>
                 <NavLink to="/admin/authors">Autores</NavLink>
                 <NavLink to="/admin/topics">Tópicos</NavLink>
+                <NavLink to="/admin/import-chunks">Importar Obras</NavLink>
                 {/* Você pode adicionar mais links aqui, ex: "Autores", "Tópicos" */}
             </nav>
 

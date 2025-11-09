@@ -2,21 +2,23 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../../AuthContext';
 import { apiClient } from '../../apiClient';
-import TopicFormModal from './TopicFormModal'; // <-- Importa o NOVO modal
+import TopicFormModal from './TopicFormModal';
 import { jwtDecode } from 'jwt-decode';
+import LoadingSpinner from '../../components/LoadingSpinner'; // <-- 1. ADICIONADO
 
 export default function TopicManagement() {
+    // (Estados... sem mudanças)
     const [topics, setTopics] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [topicToEdit, setTopicToEdit] = useState(null);
     const { session } = useAuth();
-
     const decodedToken = session ? jwtDecode(session.access_token) : null;
     const userRoles = decodedToken?.roles || [];
     const isAdmin = userRoles.includes('ADMIN');
 
+    // (fetchData... sem mudanças)
     const fetchData = useCallback(async () => {
         if (!session) return;
         setLoading(true);
@@ -38,26 +40,16 @@ export default function TopicManagement() {
         fetchData();
     }, [fetchData]);
 
-    const handleOpenModal = (topic = null) => {
-        setTopicToEdit(topic);
-        setIsModalOpen(true);
-    };
+    // (handleOpenModal, handleCloseModal, handleSave... sem mudanças)
+    const handleOpenModal = (topic = null) => { setTopicToEdit(topic); setIsModalOpen(true); };
+    const handleCloseModal = () => { setIsModalOpen(false); setTopicToEdit(null); };
+    const handleSave = () => { handleCloseModal(); fetchData(); };
 
-    const handleCloseModal = () => {
-        setIsModalOpen(false);
-        setTopicToEdit(null);
-    };
-
-    const handleSave = () => {
-        handleCloseModal();
-        fetchData();
-    };
-
+    // (handleDelete... sem mudanças)
     const handleDelete = async (topicId) => {
         if (!window.confirm("Tem certeza que deseja deletar este tópico?")) {
             return;
         }
-
         try {
             await apiClient.delete(`/admin/topics/${topicId}`, {
                 headers: { Authorization: `Bearer ${session.access_token}` }
@@ -69,11 +61,13 @@ export default function TopicManagement() {
         }
     };
 
-    if (loading) return <h1>Carregando tópicos...</h1>;
-    if (error) return <h1 style={{ color: 'red' }}>{error}</h1>;
+    // --- 2. ATUALIZADO (Loading/Error) ---
+    if (loading) return <LoadingSpinner />;
+    if (error) return <div className="message-box error">{error}</div>;
 
     return (
-        <div>
+        // --- 3. ATUALIZADO (Container) ---
+        <div className="content-box">
             {isModalOpen && (
                 <TopicFormModal
                     session={session}
@@ -86,9 +80,11 @@ export default function TopicManagement() {
             <h1>Gerenciar Tópicos</h1>
 
             {isAdmin && (
+                // --- 4. ATUALIZADO (Botão) ---
                 <button
                     onClick={() => handleOpenModal(null)}
-                    style={{ marginBottom: '1.5rem', padding: '10px 15px' }}
+                    className="btn btn-primary"
+                    style={{ marginBottom: '1.5rem' }}
                 >
                     + Adicionar Novo Tópico
                 </button>
@@ -115,9 +111,21 @@ export default function TopicManagement() {
                             <td>{topic.name}</td>
                             <td>{topic.description?.substring(0, 100) || 'N/A'}{topic.description?.length > 100 ? '...' : ''}</td>
                             {isAdmin && (
-                                <td>
-                                    <button onClick={() => handleOpenModal(topic)}>Editar</button>
-                                    <button onClick={() => handleDelete(topic.id)} style={{ marginLeft: 8 }}>Deletar</button>
+                                // --- 5. ATUALIZADO (Botões da Tabela) ---
+                                <td className="table-actions">
+                                    <button
+                                        onClick={() => handleOpenModal(topic)}
+                                        className="btn btn-secondary"
+                                    >
+                                        Editar
+                                    </button>
+                                    <button
+                                        onClick={() => handleDelete(topic.id)}
+                                        className="btn btn-danger"
+                                        style={{ marginLeft: '0.5rem' }}
+                                    >
+                                        Deletar
+                                    </button>
                                 </td>
                             )}
                         </tr>
