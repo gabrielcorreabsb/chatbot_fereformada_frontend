@@ -1,11 +1,11 @@
 import React from 'react';
-import { Outlet, NavLink } from 'react-router-dom';
+import {Outlet, NavLink} from 'react-router-dom';
 import './AdminLayout.css'; // O CSS que propus anteriormente
-import { useAuth } from '../AuthContext';
-import { supabase } from '../supabaseClient';
+import {useAuth} from '../AuthContext';
+import {supabase} from '../supabaseClient';
 
 export default function AdminLayout() {
-    const { session } = useAuth();
+    const {session} = useAuth();
 
     // Função de logout
     const handleLogout = async () => {
@@ -23,12 +23,11 @@ export default function AdminLayout() {
                 <ul>
                     {/* O NavLink 'index' (to="/admin") não é comum,
                        mas podemos adicionar um Dashboard se 'index: true' for usado */}
+                    <li><NavLink to="/admin/dashboard" end><i className="fas fa-tachometer-alt"></i> Dashboard</NavLink></li>
                     <li><NavLink to="/admin/works">Obras</NavLink></li>
                     <li><NavLink to="/admin/authors">Autores</NavLink></li>
                     <li><NavLink to="/admin/topics">Tópicos</NavLink></li>
-
-                    {/* ESTA É A CORREÇÃO:
-                        O 'to' agora corresponde ao 'path' do seu main.jsx */}
+                    <li><NavLink to="/admin/studynotes">Notas de Estudo</NavLink></li>
                     <li><NavLink to="/admin/import-chunks">Importar JSON</NavLink></li>
                 </ul>
                 <div className="sidebar-footer">
@@ -39,8 +38,9 @@ export default function AdminLayout() {
             </nav>
 
             <main className="admin-content">
-                <Outlet />
+                <Outlet/>
             </main>
         </div>
-    );
+    )
+        ;
 }

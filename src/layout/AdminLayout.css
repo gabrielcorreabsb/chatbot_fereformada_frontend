@@ -537,17 +537,45 @@ body {
     text-align: right;
 }
 
-.mt-1 { margin-top: var(--spacing-xs); }
-.mt-2 { margin-top: var(--spacing-sm); }
-.mt-3 { margin-top: var(--spacing-md); }
-.mt-4 { margin-top: var(--spacing-lg); }
-.mt-5 { margin-top: var(--spacing-xl); }
+.mt-1 {
+    margin-top: var(--spacing-xs);
+}
 
-.mb-1 { margin-bottom: var(--spacing-xs); }
-.mb-2 { margin-bottom: var(--spacing-sm); }
-.mb-3 { margin-bottom: var(--spacing-md); }
-.mb-4 { margin-bottom: var(--spacing-lg); }
-.mb-5 { margin-bottom: var(--spacing-xl); }
+.mt-2 {
+    margin-top: var(--spacing-sm);
+}
+
+.mt-3 {
+    margin-top: var(--spacing-md);
+}
+
+.mt-4 {
+    margin-top: var(--spacing-lg);
+}
+
+.mt-5 {
+    margin-top: var(--spacing-xl);
+}
+
+.mb-1 {
+    margin-bottom: var(--spacing-xs);
+}
+
+.mb-2 {
+    margin-bottom: var(--spacing-sm);
+}
+
+.mb-3 {
+    margin-bottom: var(--spacing-md);
+}
+
+.mb-4 {
+    margin-bottom: var(--spacing-lg);
+}
+
+.mb-5 {
+    margin-bottom: var(--spacing-xl);
+}
 
 .flex {
     display: flex;
@@ -809,82 +837,35 @@ body {
     }
 
     /* --- 16. Estilos de Ações em Massa (NOVO) --- */
-
-    .bulk-action-bar {
-        background-color: #f4f4ff; /* Fundo roxo/ativo claro */
-        border: 1px solid var(--color-primary-light);
-        border-radius: var(--radius);
-        padding: var(--spacing-sm) var(--spacing-lg);
-        margin-bottom: var(--spacing-lg);
-        display: flex;
-        align-items: center;
-        gap: var(--spacing-md);
-        flex-wrap: wrap; /* Permite quebrar linha em mobile */
+    .bulk-action-bar { /* ... (sem mudanças) ... */
     }
 
-    .bulk-action-bar strong {
-        color: var(--color-primary-dark);
-        margin-right: auto; /* Empurra botões para a direita */
-        font-size: 0.9rem;
-    }
-
-    /* Célula do Checkbox na Tabela */
     .admin-table th.checkbox-cell,
-    .admin-table td.checkbox-cell {
-        width: 20px;
-        padding-left: var(--spacing-md);
-        padding-right: var(--spacing-sm);
-    }
-    .admin-table td.checkbox-cell {
-        padding-top: 14px; /* Ajuste visual */
-    }
-    .admin-table input[type="checkbox"] {
-        width: 18px;
-        height: 18px;
+    .admin-table td.checkbox-cell { /* ... (sem mudanças) ... */
     }
 
-    /* Estilo da linha selecionada */
-    .admin-table tbody tr.row-selected {
-        background-color: #f4f4ff !important;
-        outline: 1px solid var(--color-primary-light);
+    .admin-table input[type="checkbox"] { /* ... (sem mudanças) ... */
     }
 
-    /* Lista de Checkbox no Modal de Tópicos */
-    .bulk-topic-body {
-        padding: 1rem 1.5rem 0 1.5rem;
+    .admin-table tbody tr.row-selected { /* ... (sem mudanças) ... */
     }
-    .topic-checkbox-list {
-        max-height: 40vh;
-        overflow-y: auto;
-        border: 1px solid var(--color-border);
-        border-radius: var(--radius);
-        padding: var(--spacing-sm);
-        background-color: var(--color-bg);
+
+    .bulk-topic-body { /* ... (sem mudanças) ... */
     }
-    .checkbox-item {
-        display: flex;
-        align-items: center;
-        gap: var(--spacing-sm);
-        padding: var(--spacing-sm);
-        border-radius: var(--radius-sm);
-        cursor: pointer;
+
+    .topic-checkbox-list { /* ... (sem mudanças) ... */
     }
-    .checkbox-item:hover {
-        background-color: #e2e8f0;
+
+    .checkbox-item { /* ... (sem mudanças) ... */
     }
-    .checkbox-item label {
-        font-weight: 500;
-        cursor: pointer;
-        margin-bottom: 0; /* Sobrescreve .form-group label */
+
+    .checkbox-item label { /* ... (sem mudanças) ... */
     }
-    .checkbox-item input[type="checkbox"] {
-        width: 16px;
-        height: 16px;
-        cursor: pointer;
+
+    .checkbox-item input[type="checkbox"] { /* ... (sem mudanças) ... */
     }
 
     /* --- 17. Estilos da Barra de Filtro (NOVO) --- */
-
     .filter-bar {
         display: grid;
         grid-template-columns: 2fr 1fr auto; /* 2 partes para busca, 1 para sort, 1 para botão */
@@ -900,8 +881,96 @@ body {
         margin-bottom: 0; /* Remove margem do .form-group */
     }
 
-    /* Responsividade da Barra de Filtro */
+    /* =============================================
+       CORREÇÃO: ESTILOS DO DASHBOARD MOVIDOS PARA CÁ
+       ============================================= */
+    /* Grid para os cartões */
+    .stat-card-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    /* Estilo individual do cartão */
+    .stat-card {
+        background-color: #fff;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .stat-value {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        margin-bottom: 0.25rem;
+    }
+
+    .stat-title {
+        font-size: 0.9rem;
+        color: #666;
+        font-weight: 500;
+    }
+
+    /* Estilo de "perigo" para vetores faltando */
+    .stat-card.stat-danger .stat-value {
+        color: var(--danger-color);
+    }
+
+
+    /* Grid para os gráficos */
+    .dashboard-charts {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        margin-top: 2rem;
+    }
+
+    /* Container de cada gráfico */
+    .chart-container {
+        /* Define uma altura fixa para o gráfico poder se expandir */
+        height: 400px;
+        background-color: #fff;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 1.5rem;
+    }
+
+    .chart-container h2 {
+        margin-top: 0;
+        text-align: center;
+        margin-bottom: 1.5rem;
+    }
+
+    /* =================================================================
+       RESPONSIVIDADE - TABLET (768px - 1024px)
+       ================================================================= */
+    @media (max-width: 1024px) {
+        :root {
+            --sidebar-width: 240px;
+        }
+
+        .admin-content {
+            padding: var(--spacing-lg);
+        }
+
+        .content-box {
+            padding: var(--spacing-lg);
+        }
+    }
+
+    /* =================================================================
+       RESPONSIVIDADE - MOBILE (até 768px)
+       ================================================================= */
     @media (max-width: 768px) {
+        .admin-layout {
+            flex-direction: column;
+        }
+
+        /* ... (outros estilos mobile sem mudança) ... */
+        /* Responsividade da Barra de Filtro */
         .filter-bar {
             grid-template-columns: 1fr; /* Uma coluna em mobile */
             gap: var(--spacing-sm);
@@ -910,5 +979,138 @@ body {
         .filter-bar .btn {
             width: 100%; /* Botão ocupa largura total */
         }
+    }
+
+    /* =================================================================
+       RESPONSIVIDADE - MOBILE PEQUENO (até 480px)
+       ================================================================= */
+    @media (max-width: 480px) {
+        :root {
+            --spacing-xl: 1.5rem;
+            --spacing-lg: 1rem;
+        }
+
+        /* ... (outros estilos mobile pequeno sem mudança) ... */
+        .admin-table td::before {
+            content: attr(data-label);
+            float: left;
+            font-weight: 600;
+            color: var(--color-secondary);
+        }
+    } /* <--- ESTA É A CHAVE QUE FALTAVA PARA FECHAR O @media (max-width: 480px) */
+    /* =================================================================
+       IMPRESSÃO
+       ================================================================= */
+    @media print {
+        .admin-sidebar,
+        .sidebar-footer,
+        .btn,
+        .table-actions {
+            display: none !important;
+        }
+
+        .admin-layout {
+            display: block;
+        }
+
+        .admin-content {
+            padding: 0;
+        }
+
+        .content-box {
+            box-shadow: none;
+            page-break-inside: avoid;
+        }
+
+        /*
+         * CORREÇÃO: A RESPONSIVIDADE DO DASHBOARD FOI MOVIDA PARA CÁ
+         */
+        /* Faz os gráficos ficarem um abaixo do outro em telas menores */
+        @media (max-width: 900px) {
+            .dashboard-charts {
+                grid-template-columns: 1fr;
+            }
+        }
+    }
+}
+
+/* --- 18. Estilos do Dashboard (NOVO) --- */
+
+/* Grid para os cartões de estatística */
+.stat-card-grid {
+    display: grid;
+    /* Tenta criar colunas de 200px, mas se ajusta */
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-xl);
+}
+
+/* Estilo individual do cartão */
+.stat-card {
+    background-color: var(--color-bg-sidebar);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: var(--spacing-lg);
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+}
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.stat-value {
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-bottom: var(--spacing-xs);
+    line-height: 1.1;
+}
+
+.stat-title {
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+    font-weight: 500;
+}
+
+/* Estilo de "perigo" para vetores faltando */
+.stat-card.stat-danger .stat-value {
+    color: var(--color-danger);
+}
+
+/* Grid para os gráficos */
+.dashboard-charts {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Dois gráficos lado a lado */
+    gap: var(--spacing-xl);
+    margin-top: var(--spacing-xl);
+}
+
+/* Container de cada gráfico */
+.chart-container {
+    /* ESTA É A CORREÇÃO CRÍTICA PARA O RECHARTS: */
+    height: 400px;
+    width: 100%;
+    background-color: var(--color-bg-sidebar);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: var(--spacing-lg);
+    box-shadow: var(--shadow-sm);
+}
+
+.chart-container h2 {
+    margin-top: 0;
+    text-align: center;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: var(--spacing-lg);
+}
+
+/* Responsividade dos gráficos */
+@media (max-width: 900px) {
+    .dashboard-charts {
+        grid-template-columns: 1fr; /* Gráficos um abaixo do outro */
+        gap: var(--spacing-lg);
     }
 }

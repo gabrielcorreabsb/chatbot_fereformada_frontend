@@ -1,11 +1,12 @@
 // src/main.jsx
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+// 1. IMPORTAR 'Navigate' PARA FAZER O REDIRECIONAMENTO
+import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
 
 // --- CSS GLOBAIS ---
 import './index.css';
-import './layout/AdminLayout.css'; //
+import './layout/AdminLayout.css';
 
 // --- PROVIDERS ---
 import { AuthProvider } from './AuthContext';
@@ -13,7 +14,7 @@ import ProtectedRoute from './ProtectedRoute';
 
 // --- PÁGINAS ---
 import App from './App';
-import AdminLayout from './layout/AdminLayout'; // <-- 2. IMPORTA O NOVO LAYOUT
+import AdminLayout from './layout/AdminLayout';
 
 // --- PÁGINAS FILHAS
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -22,6 +23,7 @@ import AuthorManagement from './pages/admin/AuthorManagement';
 import TopicManagement from "./pages/admin/TopicManagement.jsx";
 import ChunkManagement from "./pages/admin/ChunkManagement.jsx";
 import ImportPage from './pages/admin/ImportPage';
+import StudyNoteManagement from './pages/admin/StudyNoteManagement';
 
 
 const router = createBrowserRouter([
@@ -34,16 +36,21 @@ const router = createBrowserRouter([
         element: <ProtectedRoute />,
         children: [
             {
-                // 3. USA O NOVO AdminLayout COMO O "ESQUELETO"
                 element: <AdminLayout />,
                 children: [
-                    { index: true, element: <AdminDashboard /> },
+                    // ======================================================
+                    // 2. ADICIONE ESTA LINHA: A ROTA PADRÃO (index)
+                    // ======================================================
+                    { index: true, element: <Navigate to="/admin/dashboard" replace /> },
+
+                    // --- Suas rotas filhas existentes ---
+                    { path: 'dashboard', element: <AdminDashboard /> },
                     { path: 'works', element: <WorkManagement /> },
                     { path: 'authors', element: <AuthorManagement /> },
                     { path: 'works/:workId/chunks', element: <ChunkManagement /> },
                     { path: 'topics', element: <TopicManagement /> },
-                    // O path abaixo corresponde ao seu router original
-                    { path: 'import-chunks', element: <ImportPage /> }
+                    { path: 'import-chunks', element: <ImportPage /> },
+                    { path: 'studynotes', element: <StudyNoteManagement /> }
                 ],
             },
         ],
