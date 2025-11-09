@@ -117,6 +117,7 @@ export default function WorkManagement() {
                 <tr>
                     <th>ID</th>
                     <th>Título (Clique para ver o conteúdo)</th>
+                    <th>Partes</th>
                     <th>Acrônimo</th>
                     <th>Autor</th>
                     {isAdmin && <th>Ações</th>}
@@ -137,6 +138,7 @@ export default function WorkManagement() {
                                     {work.title}
                                 </Link>
                             </td>
+                            <td data-label="Partes">{work.chunkCount}</td>
                             <td>{work.acronym}</td>
                             <td>{work.author ? work.author.name : 'N/A'}</td>
                             {isAdmin && (
