@@ -27,6 +27,7 @@ export default function AdminLayout() {
                     <li><NavLink to="/admin/works">Obras</NavLink></li>
                     <li><NavLink to="/admin/authors">Autores</NavLink></li>
                     <li><NavLink to="/admin/topics">Tópicos</NavLink></li>
+                    <li><NavLink to="/admin/synonyms">Sinônimos</NavLink></li>
                     <li><NavLink to="/admin/studynotes">Notas de Estudo</NavLink></li>
                     <li><NavLink to="/admin/import-chunks">Importar JSON</NavLink></li>
                 </ul>

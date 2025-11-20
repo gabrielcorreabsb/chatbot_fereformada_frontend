@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Sidebar from './Sidebar.jsx'; // Importar
-import ChatWindow from './ChatWindow.jsx'; // Importar
+import ChatWindow from './ChatWindow.jsx';
+import ReaderModal from "./ReaderModal.jsx"; // Importar
 
 const API_URL = 'http://localhost:8080/api/v1/chat';
 
@@ -12,6 +13,8 @@ export default function ChatPage({ session }) {
     const [userInput, setUserInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [isSidebarOpenMobile, setIsSidebarOpenMobile] = useState(false); // NOVO: Estado do menu mobile
+
+    const [activeReference, setActiveReference] = useState(null);
 
     const accessToken = session.access_token;
     const getAuthHeaders = () => ({ headers: { 'Authorization': `Bearer ${accessToken}` } });
@@ -29,11 +32,11 @@ export default function ChatPage({ session }) {
     };
 
     const fetchMessages = async (chatId) => {
-        if (!chatId) return; // Não faz nada se chatId for nulo
-        setIsLoading(true); // Mostra loading na janela de chat
-        setMessages([]); // Limpa mensagens antigas
+        if (!chatId) return;
+        setIsLoading(true);
+        setMessages([]);
         setCurrentChatId(chatId);
-        setIsSidebarOpenMobile(false); // Fecha sidebar no mobile ao selecionar chat
+        setIsSidebarOpenMobile(false);
         try {
             const response = await axios.get(`${API_URL}/${chatId}`, getAuthHeaders());
             setMessages(response.data);
@@ -48,9 +51,10 @@ export default function ChatPage({ session }) {
     const handleNewChat = () => {
         setCurrentChatId(null);
         setMessages([]);
-        setIsSidebarOpenMobile(false); // Fecha sidebar no mobile
+        setIsSidebarOpenMobile(false);
     };
 
+    // --- AQUI ESTÁ A MUDANÇA PRINCIPAL ---
     const handleSendMessage = async (e) => {
         e.preventDefault();
         if (!userInput.trim()) return;
@@ -59,8 +63,6 @@ export default function ChatPage({ session }) {
         const question = userInput;
         const chatIdForRequest = currentChatId;
 
-        // Adiciona pergunta à UI imediatamente
-        // Usamos um ID temporário para a key, será substituído quando recarregar
         setMessages(prev => [...prev, { id: `temp-${Date.now()}`, role: 'user', content: question }]);
         setUserInput('');
 
@@ -70,21 +72,21 @@ export default function ChatPage({ session }) {
                 getAuthHeaders()
             );
 
-            const newChatId = response.data.chatId;
-            const aiAnswer = response.data.answer;
+            // 1. Desestruturar a resposta completa do Backend
+            const { chatId, answer, references } = response.data;
 
-            // Adiciona resposta da IA à UI
-            setMessages(prev => [...prev, { id: `temp-${Date.now()+1}`, role: 'assistant', content: aiAnswer }]);
+            // 2. Salvar a mensagem COM as referências
+            setMessages(prev => [...prev, {
+                id: `temp-${Date.now()+1}`,
+                role: 'assistant',
+                content: answer,
+                references: references // <--- O ARRAY RICO ENTRA AQUI
+            }]);
 
-            // Se era um chat novo, atualiza o ID e recarrega a sidebar
             if (!chatIdForRequest) {
-                setCurrentChatId(newChatId);
+                setCurrentChatId(chatId);
                 fetchConversations();
             }
-
-            // Poderíamos recarregar as mensagens aqui para ter os IDs corretos,
-            // mas para performance, atualizar a UI diretamente é melhor na maioria dos casos.
-            // fetchMessages(newChatId); // Opcional: recarrega tudo do backend
 
         } catch (error) {
             console.error('Erro ao enviar mensagem:', error);
@@ -94,35 +96,42 @@ export default function ChatPage({ session }) {
         }
     };
 
-    // Carrega conversas ao montar
     useEffect(() => {
         fetchConversations();
     }, []);
 
     return (
-        // Adiciona classe condicional para o estado mobile
         <div className={`ChatPage ${isSidebarOpenMobile ? 'sidebar-mobile-open' : ''}`}>
-            {/* Botão de Menu (só visível no mobile) */}
             <button
                 className="MobileMenuButton"
                 onClick={() => setIsSidebarOpenMobile(!isSidebarOpenMobile)}
             >
-                ☰ {/* Ícone de Hambúrguer */}
+                ☰
             </button>
 
             <Sidebar
                 conversations={conversations}
                 currentChatId={currentChatId}
-                onSelectChat={fetchMessages} // Passa a função de buscar mensagens
-                onNewChat={handleNewChat}   // Passa a função de novo chat
+                onSelectChat={fetchMessages}
+                onNewChat={handleNewChat}
             />
             <ChatWindow
                 messages={messages}
                 isLoading={isLoading}
                 userInput={userInput}
-                onInputChange={(e) => setUserInput(e.target.value)} // Passa a função de input
-                onSendMessage={handleSendMessage} // Passa a função de enviar
+                onInputChange={(e) => setUserInput(e.target.value)}
+                onSendMessage={handleSendMessage}
+                // PASSANDO A FUNÇÃO PARA ABRIR O MODAL
+                onOpenReference={(ref) => setActiveReference(ref)}
             />
+
+            {/* RENDERIZAÇÃO CONDICIONAL DO MODAL */}
+            {activeReference && (
+                <ReaderModal
+                    reference={activeReference}
+                    onClose={() => setActiveReference(null)}
+                />
+            )}
         </div>
     );
 }

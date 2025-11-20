@@ -6,10 +6,11 @@ import {supabase} from './supabaseClient';
 import { jwtDecode } from 'jwt-decode';
 import ChatPage from './components/ChatPage.jsx';
 import LandingChatView from './components/LandingChatView.jsx';
+import ReaderPage from './components/ReaderPage.jsx';
+import BibleReaderPage from './components/BibleReaderPage.jsx';
 import { useAuth } from './AuthContext';
 import './App.css';
-import { Link } from 'react-router-dom';
-
+import { Routes, Route, Link } from 'react-router-dom';
 const ptBR_labels = {
     sign_in: {
         email_label: "Endereço de e-mail",
@@ -62,7 +63,6 @@ export default function App() {
         return (
             <div className="LandingPage">
                 <LandingChatView onLoginClick={() => setShowLoginModal(true)} />
-
                 {showLoginModal && (
                     <div className="LoginModalOverlay">
                         <div className="LoginModalContent">
@@ -89,23 +89,46 @@ export default function App() {
     return (
         <div className="App">
             <header className="Header">
-                {isPrivilegedUser && (
-                    // 1. "BOTÃO MELHOR" APLICADO (substitui 'admin-link-button')
-                    <Link to="/admin" className="btn btn-secondary">
-                        Painel Admin
+                <div className="HeaderLeft">
+                    {/* Link para voltar ao início (Chat) */}
+                    <Link to="/" style={{ textDecoration: 'none', color: 'inherit', fontWeight: 'bold', marginRight: '20px' }}>
+                        IA Fé Reformada
                     </Link>
-                )}
-                <span>Logado como: {session.user.email}</span>
 
-                {/* 2. ESTILO GLOBAL APLICADO AO BOTÃO "SAIR" */}
-                <button
-                    onClick={() => supabase.auth.signOut()}
-                    className="btn btn-danger" // (Usando a classe de perigo)
-                >
-                    Sair
-                </button>
+                    {isPrivilegedUser && (
+                        <Link to="/admin" className="btn btn-secondary">
+                            Painel Admin
+                        </Link>
+                    )}
+                </div>
+
+                <div className="HeaderRight">
+                    <span className="UserEmail">Logado como: {session.user.email}</span>
+                    <button
+                        onClick={() => supabase.auth.signOut()}
+                        className="btn btn-danger"
+                    >
+                        Sair
+                    </button>
+                </div>
             </header>
-            <ChatPage session={session} />
+
+            {/* --- ÁREA DE CONTEÚDO COM ROTAS --- */}
+            <div className="MainContent">
+                <Routes>
+                    {/* Rota 1: O Chat (Home) */}
+                    <Route path="/" element={<ChatPage session={session} />} />
+
+                    {/* Rota 2: O Leitor de Documentos */}
+                    <Route path="/leitor/:workSlug/:chapter" element={<ReaderPage />} />
+
+                    {/* Rota 3: Leitor Bíblico (ATUALIZADA) */}
+                    {/* Antes estava um <div> placeholder, agora é o componente real */}
+                    <Route path="/biblia/:book/:chapter/:verse" element={<BibleReaderPage />} />
+
+                    <Route path="*" element={<div style={{padding: 20}}>Página não encontrada. <Link to="/">Voltar</Link></div>} />
+                </Routes>
+            </div>
         </div>
     );
 }

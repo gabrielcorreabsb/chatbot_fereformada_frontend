@@ -24,11 +24,12 @@ import TopicManagement from "./pages/admin/TopicManagement.jsx";
 import ChunkManagement from "./pages/admin/ChunkManagement.jsx";
 import ImportPage from './pages/admin/ImportPage';
 import StudyNoteManagement from './pages/admin/StudyNoteManagement';
+import SynonymManagement from './pages/admin/SynonymManagement.jsx';
 
 
 const router = createBrowserRouter([
     {
-        path: '/',
+        path: '/*',
         element: <App />,
     },
     {
@@ -50,7 +51,9 @@ const router = createBrowserRouter([
                     { path: 'works/:workId/chunks', element: <ChunkManagement /> },
                     { path: 'topics', element: <TopicManagement /> },
                     { path: 'import-chunks', element: <ImportPage /> },
-                    { path: 'studynotes', element: <StudyNoteManagement /> }
+                    { path: 'studynotes', element: <StudyNoteManagement /> },
+                    { path: 'synonyms', element: <SynonymManagement /> }
+
                 ],
             },
         ],

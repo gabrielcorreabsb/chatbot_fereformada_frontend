@@ -1,0 +1,71 @@
+/* Container das referências */
+.references-container {
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.references-header {
+    font-size: 0.75rem;
+    color: #666;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+}
+
+.chips-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+/* O Chip em si */
+.SourceChip {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: 16px; /* Arredondado estilo pílula */
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+    color: #333;
+}
+
+.chip-icon {
+    margin-right: 6px;
+    font-size: 0.9rem;
+}
+
+/* Estilo para Documentos Confessionais (Type: CHUNK) */
+.SourceChip.chunk {
+    background-color: #e3f2fd; /* Azul claro */
+    color: #1565c0;
+    border-color: #bbdefb;
+}
+
+.SourceChip.chunk:hover {
+    background-color: #bbdefb;
+    transform: translateY(-1px);
+}
+
+/* Estilo para Bíblia/Notas (Type: NOTE) */
+.SourceChip.note {
+    background-color: #fff3e0; /* Laranja claro */
+    color: #ef6c00;
+    border-color: #ffe0b2;
+}
+
+.SourceChip.note:hover {
+    background-color: #ffe0b2;
+    transform: translateY(-1px);
+}
+
+/* Ajuste no pre para não quebrar layout */
+.message-content pre {
+    white-space: pre-wrap;
+    font-family: inherit;
+    margin: 0;
+}
